@@ -1,0 +1,250 @@
+<title>Suitcase Panel Joints</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="models.js"></script>
+<style>
+/* Layout: option picker; per option a verdict, then two columns (suitcase form | shelf form), then 3D detail + Rhino changes. */
+:root {
+  --bg: #f3f4f5; --surface: #ffffff; --stage: #e6e8ea; --fg: #1d2125; --muted: #5c646c; --line: #d3d7db;
+  --accent: #9a5427; --accent-soft: #f2e4d9; --chip-on: #1d2125; --chip-on-fg: #ffffff; --img: #f1f1f1;
+  --font-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg: #15181b; --surface: #1d2125; --stage: #262b30; --fg: #e9ecee; --muted: #a2abb3;
+    --line: #343a40; --accent: #d98a55; --accent-soft: #3a2a1f; --chip-on: #e9ecee; --chip-on-fg: #15181b; --img: #e9eaeb; color-scheme: dark; }
+}
+:root[data-theme="dark"] { --bg: #15181b; --surface: #1d2125; --stage: #262b30; --fg: #e9ecee; --muted: #a2abb3;
+  --line: #343a40; --accent: #d98a55; --accent-soft: #3a2a1f; --chip-on: #e9ecee; --chip-on-fg: #15181b; --img: #e9eaeb; color-scheme: dark; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 15px; line-height: 1.55; }
+.wrap { max-width: 1200px; margin: 0 auto; padding-block: 28px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 22px; }
+h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(26px, 4vw, 36px); margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
+h2 { font-family: var(--font-display); font-weight: 600; font-size: 22px; margin: 0; text-wrap: balance; }
+h3 { font: 600 12px var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 0; }
+p { margin: 0; }
+.lede { color: var(--muted); max-width: 72ch; }
+.note { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: grid; gap: 6px; font-size: 14px; }
+.note b { font-weight: 600; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font: 500 14px/1.2 var(--font-body); padding: 10px 14px; border-radius: 8px; border: 1px solid var(--line);
+  background: var(--surface); color: var(--fg); cursor: pointer; display: grid; gap: 2px; text-align: left; min-width: 0; }
+.chip small { font: 12px var(--font-mono); color: var(--muted); }
+.chip[aria-pressed="true"] { background: var(--chip-on); color: var(--chip-on-fg); border-color: var(--chip-on); }
+.chip[aria-pressed="true"] small { color: var(--chip-on-fg); opacity: 0.75; }
+.chip:focus-visible, .seg button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.verdict { background: var(--accent-soft); border-radius: 8px; padding: 12px 14px; }
+.forms { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 900px) { .forms { grid-template-columns: minmax(0, 1fr); } }
+.form { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; display: grid; gap: 12px; align-content: start; min-width: 0; }
+.form-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.form-head .tag { font: 500 12px var(--font-mono); color: var(--accent); text-transform: uppercase; letter-spacing: 0.06em; }
+ol.steps { margin: 0; padding-left: 20px; display: grid; gap: 4px; }
+.shots { display: grid; grid-template-columns: 1.25fr 1fr 1fr; gap: 8px; }
+@media (max-width: 520px) { .shots { grid-template-columns: 1fr 1fr; } .shots figure:first-child { grid-column: 1 / -1; } }
+figure { margin: 0; display: grid; gap: 4px; min-width: 0; }
+figure .img { background: var(--img); border-radius: 6px; display: grid; place-items: center; aspect-ratio: 4 / 5; overflow: hidden; }
+figure img { max-height: 100%; width: auto; object-fit: contain; }
+figcaption { font-size: 12.5px; color: var(--muted); }
+.lower { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 16px; }
+@media (max-width: 900px) { .lower { grid-template-columns: minmax(0, 1fr); } }
+.viewer { position: relative; background: var(--stage); border-radius: 10px; overflow: hidden; min-height: 420px; border: 1px solid var(--line); }
+#cv { display: block; width: 100%; height: 100%; min-height: 420px; touch-action: none; cursor: grab; }
+.seg { position: absolute; left: 12px; top: 12px; display: flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; background: var(--surface); }
+.seg button { font: 500 13px var(--font-body); border: 0; padding: 7px 12px; background: transparent; color: var(--fg); cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--chip-on); color: var(--chip-on-fg); }
+.hint { position: absolute; left: 12px; bottom: 10px; right: 12px; font: 12px var(--font-mono); color: var(--muted); pointer-events: none; }
+.fallback { position: absolute; inset: 0; display: grid; place-items: center; padding: 24px; text-align: center; color: var(--muted); }
+.spec { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; display: grid; gap: 14px; align-content: start; min-width: 0; }
+table.dims { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+table.dims th { text-align: left; font: 600 11.5px var(--font-mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); padding: 10px 0 4px; }
+table.dims td { padding: 6px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.dims td:last-child { text-align: right; font-family: var(--font-mono); font-variant-numeric: tabular-nums; padding-left: 12px; }
+.pc { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 480px) { .pc { grid-template-columns: 1fr; } }
+.pc ul { margin: 6px 0 0; padding-left: 18px; display: grid; gap: 3px; font-size: 14px; }
+.rhino { display: grid; gap: 10px; }
+.rhino ol { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+code { font-family: var(--font-mono); font-size: 12.5px; background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; overflow-wrap: anywhere; }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.sw { width: 12px; height: 12px; border-radius: 3px; border: 1px solid var(--line); display: inline-block; }
+</style>
+
+<div class="wrap">
+  <header style="display:grid;gap:8px">
+    <h1>Suitcase Panel Joints</h1>
+    <p class="lede">Three nail-free ways to fix each panel to the body, both as a suitcase lid and as a shelf leg, built on your Rhino model (<code>ai_to_cad_suitcase_demo.3dm</code>) in its own coordinates. Every option uses the T-slot already on the front and back rings, so one slot does both jobs.</p>
+  </header>
+
+  <div class="note">
+    <p><b>What changes in your model, for all three.</b> Your panel's T-tongue (10.5 mm head) is wider than the ring's slot chamber (10 mm), and the slot is closed at both ends, so the tongue cannot get in. The slot lips are also only 1 mm. Each option widens the chamber to <b>14 mm</b> (3 mm lips, 3 mm walls left in the 20 mm bar) and replaces the continuous tongue. The drawn links and pins are replaced by a new link and a tool-free ball-lock pin at each corner.</p>
+  </div>
+
+  <nav class="chips" aria-label="Choose an option" id="chips"></nav>
+
+  <section style="display:grid;gap:16px" aria-live="polite">
+    <div style="display:grid;gap:8px"><h2 id="opt-title"></h2><p class="verdict" id="verdict"></p></div>
+    <div class="forms">
+      <div class="form" id="form-suitcase"></div>
+      <div class="form" id="form-shelf"></div>
+    </div>
+    <div class="lower">
+      <div class="viewer">
+        <canvas id="cv" aria-label="3D detail of the selected joint"></canvas>
+        <div class="fallback" id="fallback" hidden>The 3D viewer couldn't start here. The section images above show the same detail.</div>
+        <div class="seg" role="group" aria-label="Form">
+          <button type="button" id="seg-suitcase" aria-pressed="true">Suitcase form</button>
+          <button type="button" id="seg-shelf" aria-pressed="false">Shelf form</button>
+        </div>
+        <div class="hint">Front-left corner: a short length of ring and panel rail. Drag to orbit, scroll to zoom.</div>
+      </div>
+      <div class="spec" id="spec"></div>
+    </div>
+  </section>
+
+  <div class="legend" aria-label="Colour key">
+    <span><i class="sw" style="background:#b9bdc2"></i>Frame ring</span>
+    <span><i class="sw" style="background:#d6d9dc"></i>Panel rail</span>
+    <span><i class="sw" style="background:#5c6066"></i>New steel hardware</span>
+    <span><i class="sw" style="background:#c0392b"></i>The part you press, pull or turn</span>
+  </div>
+
+  <div class="note rhino">
+    <h3>Bringing an option into Rhino</h3>
+    <ol>
+      <li>Delete the parts each option replaces: the front and back frame rings and the 8 panel T-tongues (layer <code>frame track</code>), everything on <code>screws/nails</code> (24 objects), and the four 2.4 mm hinge plates on <code>foldable surface</code>.</li>
+      <li><b>File › Import</b> <code>suitcase/exports/STEP/&lt;option&gt;_shelf.step</code> or <code>_suitcase.step</code>. It lands in place: same units (mm) and coordinates as your file. It holds the rebuilt rings and all new parts, named by corner (FL, FR, BL, BR).</li>
+      <li>Or keep your own rings and panels and <b>BooleanDifference</b> the cut tools in <code>&lt;option&gt;_cuts.step</code>: <code>cut_ring_slot</code> from each ring, <code>cut_panel</code> from each panel's rail and top bar (they are placed for the panels as drawn).</li>
+    </ol>
+    <p style="color:var(--muted);font-size:13.5px">Branch <code>claude/keen-ride-4okiiq</code>, folder <code>suitcase/</code>. The rebuilt rings follow your 20 × 20 mm bars; their corner rounding is approximate.</p>
+  </div>
+</div>
+
+<script>
+const OPTIONS = [
+  { id: "a", code: "A", name: "Drop-in T-blocks", sub: "windows in the slot lips",
+    verdict: "Recommended. Nothing shows on the outside in suitcase form and there are no springs to wear, apart from a small detent ball. The one-move rule is the same in both forms: drop in, slide down 20 mm, click.",
+    suitcase: { tag: "Panel on the body", steps: ["Hold the panel about 20 mm higher than its closed position.", "Press it onto the ring: the T-blocks on its rails pass through the windows in the slot lips.", "Slide it down 20 mm. The blocks go under the lips and a spring ball clicks into a dimple.", "To take it off, push it up 20 mm and lift away."] },
+    shelf: { tag: "Box at a chosen height", steps: ["Each link's shoe carries two T-blocks, 40 mm apart.", "Drop them into any pair of windows and push down 20 mm until it clicks.", "11 heights, 40 mm apart. The box's weight pushes the blocks harder under the lips.", "The link pivots on the panel with a push-button ball-lock pin."] },
+    ring: [["Slot chamber", "10 → 14 mm wide"], ["Windows in the lips", "12 × 14 mm, every 40 mm"], ["Detent dimples", "Ø 3.6 × 0.7 mm, 20 mm below each window"]],
+    panel: [["T-blocks per rail", "4, at z 110 / −10 / −130 / −250"], ["Block", "12 long, 7.6 neck, 13.2 × 7.4 head"], ["Detent ball", "Ø 4 mm, spring-loaded"]],
+    link: [["Shoe", "2 T-blocks, 40 mm apart"], ["Pivot", "Ø 7 ball-lock pin"]],
+    pros: ["Clean outside", "No loose parts", "Same block for panel and link"], cons: ["Panel has to be offered 20 mm high", "40 mm height steps", "12 windows to machine per upright"] },
+  { id: "b", code: "B", name: "Spring index pins", sub: "holes in the slot floor",
+    verdict: "Finest height steps and a positive lock. Small red tabs show on the sides of the case, and each pin has a spring.",
+    suitcase: { tag: "Panel on the body", steps: ["Pull back the two red tabs on each side of the panel.", "Place the panel straight onto the ring.", "Let go: two Ø 6 pins per side snap into holes in the slot floor.", "To remove it, pull the tabs and lift off."] },
+    shelf: { tag: "Box at a chosen height", steps: ["Each link has a shoe captive in the slot. It goes in through a 60 mm window at the top of the slot.", "Pull the red tab, slide the box to the height you want, let go: the pin finds the next hole.", "17 heights, 30 mm apart.", "For suitcase form, slide the link out through the top window."] },
+    ring: [["Slot chamber", "10 → 14 mm wide"], ["Index holes", "Ø 6.2 × 5 mm, every 30 mm (17)"], ["Loading window", "60 mm, z 170 to 230"]],
+    panel: [["Spring pins per rail", "2, at z 130 and −200"], ["Pin", "Ø 6 mm, 6 mm travel"], ["Rail cut", "bore, counterbore and tab slot"]],
+    link: [["Shoe", "56 mm captive T-shoe"], ["Pin", "Ø 6 spring pin, red tab"], ["Pivot", "Ø 7 ball-lock pin"]],
+    pros: ["30 mm height steps", "Panel goes straight on", "Pins lock positively"], cons: ["Springs and moving parts", "Tabs stand 13 mm proud at the sides", "Link must come out through the top window"] },
+  { id: "c", code: "C", name: "Quarter-turn twist locks", sub: "no holes in the ring",
+    verdict: "The least change to your ring: only the wider chamber. Any height you like, but the shelf height is held by clamping, and wing knobs show on the front of the case.",
+    suitcase: { tag: "Panel on the body", steps: ["Turn the three wing knobs on each side so the hammer heads stand upright.", "Place the panel on the ring: the 6 mm heads pass the 8 mm mouth.", "Turn each knob a quarter turn. The head now lies across the 14 mm chamber, behind the lips.", "Reverse to remove."] },
+    shelf: { tag: "Box at a chosen height", steps: ["Each link has two T-bolts with thumb knobs.", "Slip the heads into the slot anywhere along it and turn a quarter turn.", "Tighten the knobs to clamp the link to the ring: any height, no steps.", "The link pivots on the panel with a ball-lock pin."] },
+    ring: [["Slot chamber", "10 → 14 mm wide"], ["Windows or holes", "none"]],
+    panel: [["Twist locks per rail", "3, at z 130 / −40 / −210"], ["Hammer head", "12.6 × 6 × 6 mm"], ["Wing knob", "Ø 16 mm, 22 mm wing"]],
+    link: [["T-bolts", "2, Ø 6 shaft, thumb knobs Ø 14"], ["Pivot", "Ø 7 ball-lock pin"]],
+    pros: ["Ring barely changes", "Stepless height", "Panel goes straight on"], cons: ["Knobs visible on the front", "Shelf height held by friction", "12 knobs to turn for both panels"] },
+];
+
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const chips = document.getElementById("chips");
+let current = "a", form = "suitcase";
+
+for (const o of OPTIONS) {
+  const b = document.createElement("button");
+  b.type = "button"; b.className = "chip"; b.id = "chip-" + o.id; b.dataset.id = o.id;
+  b.innerHTML = `<span>${esc(o.code)} · ${esc(o.name)}</span><small>${esc(o.sub)}</small>`;
+  b.addEventListener("click", () => { location.hash = "opt-" + o.id; });
+  chips.appendChild(b);
+}
+
+function formBlock(o, which) {
+  const f = o[which];
+  const shots = which === "suitcase"
+    ? [[`${o.id}_suitcase`, "Closed as a suitcase"], [`${o.id}_suitcase_corner`, "Panel pulled off: ring and rail"], [`${o.id}_section_suitcase`, "Section through the slot"]]
+    : [[`${o.id}_shelf`, "Shelf form"], [`${o.id}_shelf_corner`, "Hinge corner"], [`${o.id}_section_shelf`, "Section through the slot"]];
+  return `<div class="form-head"><h3>${which === "suitcase" ? "Suitcase form" : "Shelf form"}</h3><span class="tag">${esc(f.tag)}</span></div>
+    <div class="shots">${shots.map(([f, c]) => `<figure><div class="img"><img src="img/${f}.png" alt="${esc(o.name)}: ${esc(c)}"></div><figcaption>${esc(c)}</figcaption></figure>`).join("")}</div>
+    <ol class="steps">${f.steps.map(s => `<li>${esc(s)}</li>`).join("")}</ol>`;
+}
+
+function rows(title, list) {
+  return `<tr><th colspan="2">${esc(title)}</th></tr>` + list.map(([k, v]) => `<tr><td>${esc(k)}</td><td>${esc(v)}</td></tr>`).join("");
+}
+
+function show(id) {
+  const o = OPTIONS.find(x => x.id === id) || OPTIONS[0];
+  current = o.id;
+  document.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.id === o.id)));
+  document.getElementById("opt-title").textContent = `${o.code} · ${o.name}`;
+  document.getElementById("verdict").textContent = o.verdict;
+  document.getElementById("form-suitcase").innerHTML = formBlock(o, "suitcase");
+  document.getElementById("form-shelf").innerHTML = formBlock(o, "shelf");
+  document.getElementById("spec").innerHTML = `<h3>Changes and new parts (front-left corner; the other three mirror it)</h3>
+    <table class="dims"><tbody>${rows("Frame ring", o.ring)}${rows("Panel rail", o.panel)}${rows("Link (shelf form)", o.link)}</tbody></table>
+    <div class="pc"><div><h3>Good</h3><ul>${o.pros.map(s => `<li>${esc(s)}</li>`).join("")}</ul></div>
+    <div><h3>Watch for</h3><ul>${o.cons.map(s => `<li>${esc(s)}</li>`).join("")}</ul></div></div>`;
+  viewer.load(`${o.id}_${form}`);
+}
+
+function setForm(f) {
+  form = f;
+  document.getElementById("seg-suitcase").setAttribute("aria-pressed", String(f === "suitcase"));
+  document.getElementById("seg-shelf").setAttribute("aria-pressed", String(f === "shelf"));
+  viewer.load(`${current}_${form}`);
+}
+document.getElementById("seg-suitcase").addEventListener("click", () => setForm("suitcase"));
+document.getElementById("seg-shelf").addEventListener("click", () => setForm("shelf"));
+
+const viewer = (function makeViewer(canvas) {
+  const fail = () => { document.getElementById("fallback").hidden = false; canvas.hidden = true; return { load() {} }; };
+  if (!window.THREE || !THREE.GLTFLoader || !THREE.OrbitControls || !window.JOINT_MODELS) return fail();
+  let renderer;
+  try { renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true }); } catch (e) { return fail(); }
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(30, 1, 0.0001, 10);
+  const controls = new THREE.OrbitControls(camera, canvas); controls.enableDamping = true;
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x8a8f96, 0.9));
+  const key = new THREE.DirectionalLight(0xffffff, 0.7); key.position.set(-1, 2, -1.5); scene.add(key);
+  const rim = new THREE.DirectionalLight(0xffffff, 0.35); rim.position.set(1.5, 0.5, 1); scene.add(rim);
+  const loader = new THREE.GLTFLoader();
+  let obj = null, token = 0;
+  const buf = b64 => { const s = atob(b64); const u = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i); return u.buffer; };
+  function resize() {
+    const w = canvas.clientWidth, h = canvas.clientHeight, pr = renderer.getPixelRatio();
+    if (canvas.width !== Math.round(w * pr) || canvas.height !== Math.round(h * pr)) { renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); }
+  }
+  (function frame() { resize(); controls.update(); renderer.render(scene, camera); requestAnimationFrame(frame); })();
+  return {
+    load(name) {
+      const mine = ++token;
+      if (!window.JOINT_MODELS[name]) return;
+      loader.parse(buf(window.JOINT_MODELS[name]), "", g => {
+        if (mine !== token) return;
+        if (obj) scene.remove(obj);
+        obj = g.scene; scene.add(obj);
+        const box = new THREE.Box3().setFromObject(obj);
+        const c = box.getCenter(new THREE.Vector3()), size = box.getSize(new THREE.Vector3()).length();
+        // glTF is Y-up: view the front-left corner from the front (-Y in the model = +Z here) and the left (-X)
+        const d = new THREE.Vector3(-0.9, 0.45, 1).normalize();
+        controls.target.copy(c); camera.position.copy(c).addScaledVector(d, size * 1.6);
+        camera.near = size / 200; camera.far = size * 30; camera.updateProjectionMatrix(); controls.update();
+      }, fail);
+    }
+  };
+})(document.getElementById("cv"));
+
+function fromHash() { const h = (location.hash || "").replace(/^#opt-/, ""); show(OPTIONS.some(o => o.id === h) ? h : "a"); }
+window.addEventListener("hashchange", fromHash);
+fromHash();
+</script>
