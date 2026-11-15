@@ -1,0 +1,284 @@
+<title>Suitcase Joint Studies</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="models.js"></script>
+<style>
+/* Layout: a joint picker rail, then one stage — 3D viewer beside its spec sheet — with the two renders below. */
+:root {
+  --bg: #f3f4f5;          /* brushed-aluminium paper */
+  --surface: #ffffff;
+  --stage: #e6e8ea;
+  --fg: #1d2125;
+  --muted: #5c646c;
+  --line: #d3d7db;
+  --accent: #9a5427;      /* cognac leather */
+  --accent-soft: #f2e4d9;
+  --chip-on: #1d2125;
+  --chip-on-fg: #ffffff;
+  --font-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15181b; --surface: #1d2125; --stage: #262b30; --fg: #e9ecee; --muted: #a2abb3;
+    --line: #343a40; --accent: #d98a55; --accent-soft: #3a2a1f; --chip-on: #e9ecee; --chip-on-fg: #15181b;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #15181b; --surface: #1d2125; --stage: #262b30; --fg: #e9ecee; --muted: #a2abb3;
+  --line: #343a40; --accent: #d98a55; --accent-soft: #3a2a1f; --chip-on: #e9ecee; --chip-on-fg: #15181b;
+  color-scheme: dark;
+}
+body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 15px; line-height: 1.55; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-block: 28px 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 24px; }
+header { display: grid; gap: 6px; }
+h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(26px, 4vw, 36px); letter-spacing: -0.01em; margin: 0; text-wrap: balance; }
+.lede { color: var(--muted); max-width: 68ch; margin: 0; }
+.picker { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+.group { display: grid; gap: 8px; min-width: 0; }
+.group-label { font-family: var(--font-mono); font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font: 500 13.5px/1 var(--font-body); padding: 9px 12px; border-radius: 6px; border: 1px solid var(--line);
+  background: var(--surface); color: var(--fg); cursor: pointer; display: inline-flex; gap: 7px; align-items: center; }
+.chip:hover { border-color: var(--muted); }
+.chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.chip[aria-pressed="true"] { background: var(--chip-on); color: var(--chip-on-fg); border-color: var(--chip-on); }
+.chip .code { font-family: var(--font-mono); font-size: 12px; opacity: 0.7; }
+.chip .rec { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+.stage { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 0; background: var(--surface);
+  border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+@media (max-width: 860px) { .stage { grid-template-columns: minmax(0, 1fr); } }
+.viewer { position: relative; background: var(--stage); min-height: 420px; }
+#cv { display: block; width: 100%; height: 100%; min-height: 440px; touch-action: none; cursor: grab; }
+#cv:active { cursor: grabbing; }
+.viewer-fallback { position: absolute; inset: 0; display: grid; place-items: center; padding: 24px; text-align: center; color: var(--muted); }
+.viewer-hint { position: absolute; left: 12px; bottom: 10px; font: 12px var(--font-mono); color: var(--muted); pointer-events: none; }
+.viewer-tags { position: absolute; left: 12px; top: 10px; display: flex; gap: 6px; flex-wrap: wrap; }
+.tag { font: 500 11.5px/1 var(--font-mono); padding: 5px 7px; border-radius: 4px; background: var(--surface); color: var(--muted); border: 1px solid var(--line); }
+.sheet { padding: 22px 22px 24px; display: grid; gap: 16px; align-content: start; min-width: 0; border-left: 1px solid var(--line); }
+@media (max-width: 860px) { .sheet { border-left: 0; border-top: 1px solid var(--line); } }
+.sheet h2 { font-family: var(--font-display); font-weight: 600; font-size: 22px; margin: 0; text-wrap: balance; }
+.form-label { font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
+.sheet p { margin: 0; }
+.verdict { background: var(--accent-soft); border-radius: 6px; padding: 10px 12px; font-size: 14px; }
+.sheet h3 { font: 600 12px var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 0 0 6px; }
+ol.steps { margin: 0; padding-left: 20px; display: grid; gap: 4px; }
+table.dims { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+table.dims td { padding: 6px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.dims td:last-child { text-align: right; font-family: var(--font-mono); font-variant-numeric: tabular-nums; padding-left: 12px; white-space: nowrap; }
+.pc { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 480px) { .pc { grid-template-columns: 1fr; } }
+.pc ul { margin: 0; padding-left: 18px; display: grid; gap: 3px; font-size: 14px; }
+.renders { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+figure { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; display: grid; grid-template-rows: 1fr auto; }
+figure .img { background: #f1f1f1; display: grid; place-items: center; padding: 10px; min-height: 260px; }
+figure img { max-height: 380px; width: auto; object-fit: contain; }
+figcaption { padding: 10px 14px; font-size: 13.5px; color: var(--muted); border-top: 1px solid var(--line); }
+figcaption b { color: var(--fg); font-weight: 500; }
+.files { font-size: 13.5px; color: var(--muted); display: grid; gap: 4px; }
+.files code { font-family: var(--font-mono); font-size: 12.5px; color: var(--fg); background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; overflow-wrap: anywhere; }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.sw { width: 12px; height: 12px; border-radius: 3px; border: 1px solid var(--line); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Suitcase Joint Studies</h1>
+    <p class="lede">Eight nail-free joints for the multipurpose suitcase, each modelled as a sample piece. Every 3D view holds two copies: one assembled, and one opened like a book so the two mating faces point at you. Drag to orbit, scroll or pinch to zoom.</p>
+  </header>
+
+  <nav class="picker" aria-label="Choose a joint">
+    <div class="group">
+      <div class="group-label">1 · Frame to body (suitcase form)</div>
+      <div class="chips" id="chips-1"></div>
+    </div>
+    <div class="group">
+      <div class="group-label">2 · Box height on the legs (shelf form)</div>
+      <div class="chips" id="chips-2"></div>
+    </div>
+  </nav>
+
+  <section class="stage" aria-live="polite">
+    <div class="viewer">
+      <canvas id="cv" aria-label="3D model of the selected joint"></canvas>
+      <div class="viewer-fallback" id="fallback" hidden>The 3D viewer couldn't start in this browser. The two rendered views below show the same model.</div>
+      <div class="viewer-tags"><span class="tag">assembled + opened copies</span></div>
+      <div class="viewer-hint">drag to orbit · scroll to zoom · right-drag to pan</div>
+    </div>
+    <div class="sheet" id="sheet"></div>
+  </section>
+
+  <div class="renders" id="renders"></div>
+
+  <div class="legend" aria-label="Colour key">
+    <span><i class="sw" style="background:#efe9dc"></i>Suitcase body</span>
+    <span><i class="sw" style="background:#b9bdc2"></i>Aluminium frame or leg</span>
+    <span><i class="sw" style="background:#a65f33"></i>Leather panel</span>
+    <span><i class="sw" style="background:#5c6066"></i>Steel hardware</span>
+    <span><i class="sw" style="background:#2f3236"></i>Magnet</span>
+    <span><i class="sw" style="background:#c0392b"></i>The part you press or pull</span>
+  </div>
+
+  <div class="files">
+    <div>Rhino files: <code>joints/exports/STEP/</code> on branch <code>claude/keen-ride-4okiiq</code> (File › Import, or drag in). Each STEP holds both copies, with the parts named and coloured.</div>
+    <div>Sample sizes: 15 mm body walls, 30 × 14 mm frame bars, 30 × 18 mm leg rails. They are placeholders; tell me your real sizes and I'll rebuild to scale.</div>
+  </div>
+</div>
+
+<script>
+const JOINTS = [
+  { id: "1a", group: 1, code: "1A", name: "Groove and lip", file: "1A_groove_and_lip", form: "Suitcase form · locating",
+    verdict: "Locates the frame and stops it sliding, but holds nothing by itself. Pair it with the keyhole studs or magnets.",
+    rec: true,
+    how: ["A continuous groove runs round the body's front edge.", "A matching lip on the back of the frame drops into it.", "The fit squares the frame, takes side knocks and closes the dust gap."],
+    dims: [["Groove (width × depth)", "4.0 × 5.0 mm"], ["Lip (width × height)", "3.6 × 4.5 mm"], ["Clearance per side", "0.2 mm"], ["Clearance at the bottom", "0.5 mm"], ["Groove position", "centre of 15 mm wall"]],
+    pros: ["Invisible once closed", "Self-aligning", "Seals the edge"], cons: ["Needs a second joint to hold", "Tight tolerance along the whole edge"],
+    detail: "Section through the bottom wall: the lip sitting in its groove." },
+  { id: "1b", group: 1, code: "1B", name: "Keyhole slots and studs", file: "1B_keyhole_slots", form: "Suitcase form · hold",
+    verdict: "Press the frame on and slide it down 12 mm. Gravity locks it, and the same studs carry the load in shelf form.",
+    rec: true,
+    how: ["Mushroom studs stand off the back of the frame.", "Keyholes in the body take the stud heads, then the narrow slot traps the necks.", "A chamber behind the 3 mm face plate lets the head slide down behind it."],
+    dims: [["Head hole", "Ø 10.5 mm"], ["Neck slot width", "6.4 mm"], ["Slide travel", "12 mm"], ["Face plate / chamber", "3 / 5 mm"], ["Stud head", "Ø 10 × 3 mm"], ["Stud neck", "Ø 6 × 3.2 mm"]],
+    pros: ["No moving parts", "Hidden", "Strong in shear"], cons: ["Needs a thicker strip of wall (shown) or a metal keyhole plate", "Frame must lift 12 mm to remove"],
+    detail: "Section through the keyholes: the stud heads locked behind the face plate." },
+  { id: "1c", group: 1, code: "1C", name: "Magnets and locating pins", file: "1C_magnets_and_pins", form: "Suitcase form · closing feel",
+    verdict: "Gives a clean snap shut and finds its own position. Too weak to carry the shelf alone.",
+    rec: true,
+    how: ["Disc magnets sit in pockets in both the body rim and the frame (opposite poles facing).", "Tapered pins on the frame drop into tapered holes and guide it home.", "Cover the pockets with a thin skin or the leather to hide them."],
+    dims: [["Magnet", "Ø 10 × 3 mm"], ["Pocket", "Ø 10.2 × 3.1 mm"], ["Locating pin", "Ø 6 → 4 mm, 5 mm tall"], ["Pin hole", "Ø 6.4 → 4.4 mm, 5.3 deep"], ["Pairs shown per corner", "3 magnets, 2 pins"]],
+    pros: ["Satisfying close", "Nothing to operate", "Self-locating"], cons: ["Low pull-off strength", "Magnets near cards and phones"],
+    detail: "Section through the side wall: magnet pairs and a locating pin." },
+  { id: "1d", group: 1, code: "1D", name: "Over-centre draw latch", file: "1D_draw_latch", form: "Suitcase form · travel lock",
+    verdict: "The secure option while the case is rolling. Visible, but it suits the luggage look.",
+    rec: false,
+    how: ["The latch base sits on the body's side face, the keeper on the frame.", "Hook the wire loop behind the keeper.", "Flip the red tab: the over-centre lever pulls the frame tight onto its lip."],
+    dims: [["Latch base", "32 × 24 mm"], ["Wire loop", "Ø 2.4 mm, 16 mm wide"], ["Keeper", "22 mm tall"], ["Position shown", "80 mm up the side"]],
+    pros: ["Positive lock", "Pulls the joint tight", "Off-the-shelf part"], cons: ["Visible hardware", "Fixed to the surface (rivet or bond)"],
+    detail: "The assembled corner from the side, latch closed." },
+  { id: "2-1", group: 2, code: "2-1", name: "Keyhole ladder", file: "2-1_keyhole_ladder", form: "Shelf form · stepped height",
+    verdict: "Simplest height adjustment, and it reuses the 1B studs, so one set of hardware does both forms.",
+    rec: true,
+    how: ["A column of keyholes runs up the inside of each leg rail.", "The box side carries two studs, two slots apart.", "To move it: lift, pull out, drop onto another pair of keyholes and slide down."],
+    dims: [["Keyhole pitch", "45 mm"], ["Positions shown", "8 (315 mm of travel)"], ["Stud spacing", "90 mm"], ["Keyhole", "as 1B: Ø 10.5 / 6.4 slot / 12 travel"]],
+    pros: ["No moving parts", "Cheap", "Same studs as 1B"], cons: ["Needs two hands and a lift", "Fixed steps"],
+    detail: "Section through the rail: both studs hooked in their keyholes." },
+  { id: "2-2", group: 2, code: "2-2", name: "Spring plunger in a channel", file: "2-2_spring_plunger", form: "Shelf form · stepped height",
+    verdict: "The premium feel: pull, slide, let go and it clicks in. Link the pins to the side handle so one squeeze releases both.",
+    rec: true,
+    how: ["Each leg has a C-channel with index holes in its back wall.", "A T-shaped guide on the box runs in the channel and keeps it square.", "A spring pushes an Ø 8 pin into a hole; pull the red knob to free it."],
+    dims: [["Channel", "30 × 18 mm, 14 mm mouth"], ["Index holes", "Ø 8.4 mm at 35 mm pitch"], ["Positions shown", "10"], ["Pin", "Ø 8 mm"], ["Guide clearance", "0.5 mm each side"], ["Pull knob", "Ø 22 mm"]],
+    pros: ["One hand", "Guided travel", "Clear click"], cons: ["Springs and moving parts", "Needs the linkage designed"],
+    detail: "Section: the pin through the box wall, guide and channel into an index hole." },
+  { id: "2-3", group: 2, code: "2-3", name: "Sawtooth rack and pawl", file: "2-3_rack_and_pawl", form: "Shelf form · stepped height",
+    verdict: "Push the box up and it ratchets to the next tooth by itself. Press the red tab to lower it.",
+    rec: false,
+    how: ["A sawtooth strip lines each leg channel, flat ledges facing up.", "A pawl pivots in a pocket in the box wall and rests on a ledge like a strut.", "Weight locks it; pushing up rides the pawl over the slopes."],
+    dims: [["Tooth pitch / depth", "22 / 8 mm"], ["Teeth shown", "16"], ["Pawl thickness", "10 mm"], ["Pivot pin", "Ø 4 mm"], ["Pocket in box wall", "14 × 46 mm, open inside"]],
+    pros: ["One-hand raise", "Self-locking under load", "Fine steps"], cons: ["Lowering needs the tab on both sides", "More parts to tool"],
+    detail: "Section: the pawl resting on a tooth ledge, release tab at the top." },
+  { id: "2-4", group: 2, code: "2-4", name: "T-slot and cam lever", file: "2-4_cam_clamp", form: "Shelf form · any height",
+    verdict: "Any height you like, clamped by friction. Choose it only if fixed steps aren't good enough.",
+    rec: false,
+    how: ["Each leg is a T-slot rail.", "A T-nut in the slot is tied to the box by a rod.", "Flipping the red cam lever pulls the nut tight against the slot's lips."],
+    dims: [["Slot neck / chamber", "12 / 22 mm"], ["T-nut", "20 × 6 × 60 mm"], ["Rod", "Ø 8 mm"], ["Cam offset", "3 mm"], ["Lever length", "about 70 mm"]],
+    pros: ["Stepless", "Fast", "Rail looks clean"], cons: ["Holds by friction only", "Lever on the inside of the box"],
+    detail: "Section: T-nut in the slot, rod and cam lever inside the box." },
+];
+
+const viewer = makeViewer(document.getElementById("cv"));
+
+function makeViewer(canvas) {
+  if (!window.THREE || !THREE.GLTFLoader || !THREE.OrbitControls || !window.JOINT_MODELS) {
+    document.getElementById("fallback").hidden = false; canvas.hidden = true;
+    return { load() {} };
+  }
+  let renderer;
+  try { renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true }); }
+  catch (e) { document.getElementById("fallback").hidden = false; canvas.hidden = true; return { load() {} }; }
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(32, 1, 0.001, 100);
+  const controls = new THREE.OrbitControls(camera, canvas);
+  controls.enableDamping = true;
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x8a8f96, 0.85));
+  const key = new THREE.DirectionalLight(0xffffff, 0.75); key.position.set(1, 2, 1.5); scene.add(key);
+  const rim = new THREE.DirectionalLight(0xffffff, 0.35); rim.position.set(-1.5, 0.5, -1); scene.add(rim);
+  const loader = new THREE.GLTFLoader();
+  let current = null, token = 0;
+  const b64ToBuf = b64 => { const bin = atob(b64); const u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return u.buffer; };
+  function resize() {
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    if (canvas.width !== Math.round(w * renderer.getPixelRatio()) || canvas.height !== Math.round(h * renderer.getPixelRatio())) {
+      renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
+    }
+  }
+  function frame() { resize(); controls.update(); renderer.render(scene, camera); requestAnimationFrame(frame); }
+  requestAnimationFrame(frame);
+  return {
+    load(name, dir) {
+      const mine = ++token;
+      loader.parse(b64ToBuf(window.JOINT_MODELS[name]), "", gltf => {
+        if (mine !== token) return;
+        if (current) scene.remove(current);
+        current = gltf.scene; scene.add(current);
+        const box = new THREE.Box3().setFromObject(current);
+        const centre = box.getCenter(new THREE.Vector3()), size = box.getSize(new THREE.Vector3()).length();
+        const d = new THREE.Vector3(...dir).normalize();
+        controls.target.copy(centre);
+        camera.position.copy(centre).addScaledVector(d, size * 1.45);
+        camera.near = size / 100; camera.far = size * 20; camera.updateProjectionMatrix();
+        controls.update();
+      }, () => { document.getElementById("fallback").hidden = false; });
+    }
+  };
+}
+const sheet = document.getElementById("sheet");
+const renders = document.getElementById("renders");
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+for (const j of JOINTS) {
+  const b = document.createElement("button");
+  b.className = "chip"; b.type = "button"; b.id = "chip-" + j.id; b.dataset.id = j.id;
+  b.innerHTML = `<span class="code">${esc(j.code)}</span>${esc(j.name)}${j.rec ? '<i class="rec" title="Recommended"></i>' : ""}`;
+  b.addEventListener("click", () => { location.hash = "j" + j.id; show(j.id); });
+  document.getElementById("chips-" + j.group).appendChild(b);
+}
+
+function show(id) {
+  const j = JOINTS.find(x => x.id === id) || JOINTS[0];
+  document.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.id === j.id)));
+  // glTF is Y-up: a CAD direction (x, y, z) is (x, z, -y) here
+  viewer.load(j.file, j.group === 1 ? [0.45, 0.55, -1] : [0.45, 0.45, 1]);
+  sheet.innerHTML = `
+    <div class="form-label">${esc(j.code)} · ${esc(j.form)}${j.rec ? " · recommended" : ""}</div>
+    <h2>${esc(j.name)}</h2>
+    <p class="verdict">${esc(j.verdict)}</p>
+    <div><h3>How it works</h3><ol class="steps">${j.how.map(s => `<li>${esc(s)}</li>`).join("")}</ol></div>
+    <div><h3>Modelled sizes</h3><table class="dims"><tbody>${j.dims.map(([k, v]) => `<tr><td>${esc(k)}</td><td>${esc(v)}</td></tr>`).join("")}</tbody></table></div>
+    <div class="pc"><div><h3>Good</h3><ul>${j.pros.map(s => `<li>${esc(s)}</li>`).join("")}</ul></div>
+    <div><h3>Watch for</h3><ul>${j.cons.map(s => `<li>${esc(s)}</li>`).join("")}</ul></div></div>`;
+  renders.innerHTML = `
+    <figure><div class="img"><img src="img/${j.file}_opened.png" alt="${esc(j.name)}, opened view"></div>
+      <figcaption><b>Opened.</b> Both mating faces turned towards you.</figcaption></figure>
+    <figure><div class="img"><img src="img/${j.file}_detail.png" alt="${esc(j.name)}, detail view"></div>
+      <figcaption><b>Detail.</b> ${esc(j.detail)}</figcaption></figure>`;
+}
+
+function fromHash() {
+  const h = (location.hash || "").replace(/^#j/, "");
+  show(JOINTS.some(j => j.id === h) ? h : "1b");
+}
+window.addEventListener("hashchange", fromHash);
+fromHash();
+</script>
