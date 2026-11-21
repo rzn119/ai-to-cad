@@ -1,95 +1,112 @@
-# Suitcase body: printable pieces with connectors (Bambu A1 mini)
+# Suitcase body: printable pieces with hidden joints (Bambu A1 mini)
 
 Parts 6 and 7 from `part_6_and_7.3dm`, cut into **14 pieces (7 per part)** that each fit the
-A1 mini's 180 × 180 × 180 mm build volume with at least 5 mm to spare, plus the connectors that
-join them by hand after printing.
+A1 mini's 180 × 180 × 180 mm build volume with at least 5 mm to spare. Every joint is **inside the
+cut faces**: nothing stands on the inside or the outside of the shell, and the only thing you see
+assembled is the seam line.
+
+## The joints
+
+| Joint | What it is | Size | Fit |
+| --- | --- | --- | --- |
+| 6 vertical seams per part | **Sliding dovetail the full height of the cut face.** A rail stands 3.0 mm out of one piece's face; the next piece has the matching slot | rail 1.4 mm at the root → 2.0 mm at the tip, in the 4.46 mm wall | 0.15 mm per side, 0.2 mm at the slot's end; leaves 1.06 mm of wall beside the slot |
+| Part 6 to part 7, all the way round | **Tongue and groove on the edges**, following the wall through the corners and both handle recesses | tongue 1.6 wide × 3.0 tall on part 6's top edge; groove 2.0 wide × 3.4 deep in part 7's bottom edge | 0.2 mm per side, 0.4 mm at the bottom; leaves 1.23 mm of wall beside the groove |
+
+The dovetails stop the pieces pulling apart along the wall; the tongue keeps the two halves in line
+and stops them sliding sideways. Everything goes together in one direction, straight down.
 
 ## What changed from the drawn grid, and why
 
-- **Side-wall cuts moved to y −652 and −482** (the grid had −662.2 and −482.2). The grid's middle
-  row was exactly 180.0 mm long, the full plate, and the cut at −662.2 would have left no room for
-  a connector clear of the side-wall handle recess (y −634 to −500). The longest straight piece is
-  now 170 mm.
-- **The end wall is cut either side of its handle recess (x 12948 and 13124.7) instead of in the
-  middle**, giving 7 pieces per part rather than 6. The end wall carries a 140 mm handle recess right
-  where the drawn centre cut is; a seam there would split the handle the suitcase is lifted by, and
-  there is no flat face for a connector. The middle piece (E) holds the whole handle and fits the
-  plate turned 45°.
-- **Part 7 stacks on part 6** (its bottom edge on part 6's top edge), which completes the two
-  handle recesses that cross the joint.
-
-## Connectors
-
-| Joint | Connector | Fit |
-| --- | --- | --- |
-| Vertical seams (6: two on the end wall, two on each side wall) | Pads on the inside carry half a dovetail groove each; one printed dovetail key per seam (166 mm) slides up from below through part 6 into part 7 | 0.20 mm clearance per side, every face |
-| Joint between part 6 and part 7, between the seams (5 places) | Ø5 × 28 mm dowels in pads either side of the joint | Ø5.4 holes for Ø5.0 pins (0.20 per side), 0.5 mm entry chamfers |
-
-The keys lock each seam, and because they run through both halves they also tie part 6 to part 7.
-The dowels keep the long joint between them in line. The 7 mm fixed hard panel inside the bottom of
-part 6 sits below every pad (pads start at z −170, the panel's top is −171.5) and stops the keys
-from sliding out.
+- **Side-wall cuts at y −652 and −482** (the grid had −662.2 and −482.2). The grid's middle row was
+  exactly 180.0 mm, the whole plate. The longest piece is now 173 mm, rail included.
+- **The end wall is cut either side of its handle recess (x 12948 and 13124.7), not in the middle:**
+  7 pieces per part instead of 6. The drawn centre cut runs through the 140 mm handle recess the case
+  is lifted by. The middle piece (E) holds the whole handle and fits the plate turned 45°.
+- **Part 7 stacks on part 6**, completing the two handle recesses that cross that joint.
 
 ## Print
 
-1. **Print `exports/STL/fit_test.stl` first** (a small plate, 103 × 55 mm). Try the three keys (1, 2, 3
-   notches = 0.15, 0.20, 0.25 mm) in the groove and a dowel in the Ø5.2 / 5.4 / 5.6 holes. If
-   0.20 is too tight or too loose on your printer, change `CLEAR_KEY` / `CLEAR_DOWEL` in
-   `src/connectors.py` and rebuild (below).
-2. Pieces `exports/STL/P6-*.stl` and `P7-*.stl`, one per plate, **already in print orientation**:
-   part 6 pieces upside down, part 7 pieces upright, so the edge where the halves meet is on the bed
-   and every pad starts on the plate. P6-E and P7-E are already turned 45° to fit.
-   - Supports: tree supports only under the handle recesses (P6-BR, P7-BR, P6-E, P7-E). The other
-     pieces need none.
-   - The long thin pieces (A and B, 13.5 mm thick, 92 mm tall): use a 5 mm brim.
-   - Suggested: 0.2 mm layers, 4 walls (the 4.46 mm walls print almost solid), PLA or PETG.
-3. `exports/3MF/keys_and_dowels_plate.3mf`: 7 keys (6 + 1 spare) and 7 dowels (5 + 2 spare) on one
-   plate, laid flat. No supports.
-
-Material, roughly: 1.27 litres of part, about 1.5–1.6 kg of PLA at near-solid walls.
+1. **Print `exports/STL/fit_test.stl` first** (110 × 20 mm, printed upright like the pieces):
+   - three dovetail pairs: slot stubs with 1, 2, 3 notches = 0.10, 0.15, 0.20 mm clearance;
+   - one tongue stub and three groove stubs with 1, 2, 3 notches = 0.15, 0.20, 0.25 mm.
+   Slide each pair together vertically. If the 0.15 dovetail or the 0.20 groove is tight or loose on
+   your printer, set `CLEAR_RAIL` (and the groove width in `tools/joint_section.py`) and rebuild.
+2. The 14 pieces, `exports/STL/P6-*.stl` and `P7-*.stl`, one per plate, **already oriented: upright,
+   as they stand in the suitcase.** Part 6's tongue points up; part 7's groove opens at the bed.
+   P6-E and P7-E are turned 45° to fit.
+   - Supports: tree supports under the handle recesses only (P6-BR, P7-BR, P6-E, P7-E).
+   - The straight pieces are 4.5 mm thick and up to 173 × 95 mm: use a 5–8 mm brim, and turn on
+     "elephant foot compensation" (Bambu Studio's default 0.15 mm is fine) so the groove at part 7's
+     bottom stays open.
+   - Suggested: 0.2 mm layers, 4 walls, PLA or PETG. About 1.01 litres of part (≈1.26 kg PLA solid).
 
 ## Assemble
 
-1. Stand the part 6 pieces up in place (labels P6-AL … P6-E are engraved on the inside faces).
-2. Push the dowels into the holes along part 6's top edge.
-3. Lower the part 7 pieces onto part 6: dowels into holes, seams in line.
-4. From inside, slide a key up into each of the 6 seam grooves from the bottom edge until it stops.
-5. Fit the hard panel into the bottom of part 6. It also holds the keys in.
+1. Part 6: stand one piece up, then slide the next one down onto it so its slot runs over the rail
+   (or its rail into the slot). Carry on round the U. A piece between two others slides down past
+   both at once.
+2. Part 7: lower each piece down past its neighbours and onto part 6's tongue.
+3. Optional: a little CA glue or 2-part epoxy in the slots and groove before sliding makes it
+   permanent. Without glue the dovetails hold the shell together sideways and the tongue holds it
+   in line; the halves are held down by their own weight and whatever clamps the shell (the frame
+   ring, the hard panel).
 
-A drop of CA glue on the keys makes the shell permanent; without glue it can be taken apart again.
+Assembly map (looking down into the U, open end at the bottom):
+
+```
+          end wall:  CL | E | CR
+                     ---+---+---
+   left wall:  CL                 CR   right wall
+               BL                 BR   (BR holds the side handle)
+               AL                 AR
+                    (open end)
+```
+Each position has a P6 piece (lower half) and a P7 piece (upper half). The engraved labels are off
+(`LABELS = False` in `src/hidden_joints.py`) to keep every face clean; name the pieces with a pencil
+on the cut face, or turn the labels back on.
 
 ## Files
 
-- `exports/STL/` – 14 pieces, the key, the dowel and the fit test, ready for Bambu Studio.
-- `exports/3MF/keys_and_dowels_plate.3mf` – the small parts on one plate.
-- `exports/STEP/rhino_part6_connectors.step`, `rhino_part7_connectors.step` – for Rhino, placed
-  exactly where parts 6 and 7 are in your file: union `part*_pads_to_add`, BooleanDifference
-  `part*_cut_tools`, then split at x 13036.33 (side walls), x 12948 / 13124.66 (end wall) and
-  y −652 / −482.
-- `exports/STEP/connectors_assembled.step` – pads, keys and dowels with part 7 stacked on part 6.
+- `exports/STL/` – the 14 pieces and the fit test, ready for Bambu Studio.
+- `exports/STEP/rhino_part6_joints.step`, `rhino_part7_joints.step` – for Rhino, placed exactly on
+  parts 6 and 7 where they sit in your file. Split each part at x 13036.33 (side walls),
+  x 12948 / 13124.66 (end wall) and y −652 / −482, then for each piece union `<piece> add` (its rails,
+  and part 6's tongue) and BooleanDifference `<piece> cut` (its slots, and part 7's groove).
+- `exports/STEP/hidden_joints_assembled.step` – the rails and the tongue in the assembled position.
 - `exports/pieces_report.json` – size, volume and checks for every piece.
-- `src/connectors.py` – every connector dimension and tolerance; `src/check_fit.py` checks the
-  clearances; `src/exports.py` writes the files.
-- `tools/make_pieces.py` – reads the .3dm, cuts and joins the meshes, writes the pieces;
-  `tools/make_plates.py`, `tools/preview.py` – plate and previews.
+- `src/hidden_joints.py` – every joint dimension and clearance; `src/check_hidden.py` checks the
+  clearances; `src/build_parts.py` writes each piece's add/cut geometry; `src/exports.py` the STEPs
+  and the fit test.
+- `tools/joint_section.py` traces the wall at the joint in the .3dm (tongue and groove outlines);
+  `tools/make_pieces.py` cuts the shells into pieces and applies the joints; `tools/preview.py`
+  renders.
 
 Rebuild after a change:
 
 ```bash
+python tools/joint_section.py part_6_and_7.3dm build/joint_section.json
+cad run src/build_parts.py
 cad run src/exports.py
 python tools/make_pieces.py part_6_and_7.3dm build exports
-python tools/make_plates.py exports
 ```
 
-(`make_pieces.py` needs `pip install rhino3dm trimesh manifold3d mapbox_earcut`.)
+(The Python tools need `pip install rhino3dm trimesh manifold3d mapbox_earcut shapely`.)
+
+## Checks run
+
+- Rail to slot 0.150 mm and tongue to groove 0.200 mm, measured on the solids; a rail made 0.2 mm
+  too wide is caught.
+- All 14 pieces closed (watertight) and inside the plate with ≥ 5 mm to spare.
+- No two pieces overlap when assembled (31 touching pairs, largest overlap 0.0000 mm³); a piece
+  pushed 0.3 mm into its neighbour is caught (95 mm³).
+- 3D-printing check (FDM, PLA, general design rules) passes on all 14 pieces and the fit test;
+  thinnest wall 1.05 mm, beside the slots.
 
 ## Limits
 
-- The pieces are cut from the render meshes saved in the .3dm (about 4,000–9,000 triangles per
-  part), so the corner fillets are faceted. For smoother prints, export each part from Rhino as a
-  fine STL and point `make_pieces.py` at it, or send me the parts as STEP.
-- Part 7's mesh had a small gap in its bottom face; it was closed by trimming 0.02 mm off the
-  bottom edge.
-- The print check passes on every piece but one: P7-AL has a 0.59 mm rib inside the engraved
-  letter "A", a cosmetic 0.6 mm-deep detail.
+- The pieces are cut from the render meshes saved in the .3dm, so the corner fillets are faceted.
+  Export each part from Rhino as a fine STL (or STEP) for smoother prints and rerun.
+- Part 7's mesh had a small gap in its bottom face; it was closed by trimming 0.02 mm off the edge.
+- The walls beside the slots are about 1 mm: strong enough to locate and hold the pieces, but
+  slide the pieces together gently and in line, and glue them for a permanent shell.
 - No strength check was run on the joints.

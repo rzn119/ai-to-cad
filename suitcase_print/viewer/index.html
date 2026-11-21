@@ -2,7 +2,7 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: header; what changed; images; connectors table; print and assemble steps; pieces table. */
+/* Layout: header + stats; the joints; what changed; images; print and assemble; pieces; limits. */
 :root {
   --bg: #f3f4f5; --surface: #ffffff; --fg: #1d2125; --muted: #5c646c; --line: #d3d7db;
   --accent: #b23a2a; --accent-soft: #f6e3df; --img: #f1f1f1;
@@ -30,9 +30,10 @@ p { margin: 0; }
 .stat b { font: 600 20px var(--font-display); font-variant-numeric: tabular-nums; }
 .stat span { font-size: 12.5px; color: var(--muted); }
 .card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; display: grid; gap: 10px; min-width: 0; }
-.changes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
-@media (max-width: 860px) { .changes { grid-template-columns: minmax(0, 1fr); } }
-.changes .card p { font-size: 14px; }
+.three { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 860px) { .three, .two { grid-template-columns: minmax(0, 1fr); } }
+.card p { font-size: 14px; }
 .gallery { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
 @media (max-width: 760px) { .gallery { grid-template-columns: minmax(0, 1fr); } }
 figure { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; display: grid; }
@@ -46,9 +47,8 @@ table { width: 100%; border-collapse: collapse; font-size: 14px; }
 th { text-align: left; font: 600 11.5px var(--font-mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); padding: 8px 10px 6px 0; border-bottom: 1px solid var(--line); }
 td { padding: 8px 10px 8px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
 td.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.steps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
-@media (max-width: 760px) { .steps { grid-template-columns: minmax(0, 1fr); } }
 ol { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+pre { margin: 0; font: 13px/1.45 var(--font-mono); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; overflow-x: auto; }
 .callout { background: var(--accent-soft); border-radius: 8px; padding: 12px 14px; }
 code { font-family: var(--font-mono); font-size: 12.5px; background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; overflow-wrap: anywhere; }
 .tag { font: 500 11.5px var(--font-mono); padding: 2px 6px; border-radius: 4px; background: var(--accent-soft); color: var(--accent); white-space: nowrap; }
@@ -57,96 +57,86 @@ code { font-family: var(--font-mono); font-size: 12.5px; background: var(--bg); 
 <div class="wrap">
   <header style="display:grid;gap:8px">
     <h1>Suitcase Body Print Kit</h1>
-    <p class="lede">Parts 6 and 7 cut into pieces that fit a Bambu A1 mini (180 × 180 × 180 mm), with connectors that join them by hand after printing. Built on <code>part_6_and_7.3dm</code>, in its own coordinates.</p>
+    <p class="lede">Parts 6 and 7 cut into pieces that fit a Bambu A1 mini (180 × 180 × 180 mm). Every joint is inside the cut faces: nothing on the inside or outside of the shell, only the seam line shows. Built on <code>part_6_and_7.3dm</code>, in its own coordinates.</p>
   </header>
 
   <div class="stats">
     <div class="stat"><b>14</b><span>pieces, 7 per part</span></div>
-    <div class="stat"><b>170 mm</b><span>longest piece (plate 180)</span></div>
-    <div class="stat"><b>6 + 5</b><span>dovetail keys + dowels</span></div>
-    <div class="stat"><b>0.20 mm</b><span>clearance per side</span></div>
-    <div class="stat"><b>≈1.27 L</b><span>printed volume</span></div>
+    <div class="stat"><b>0</b><span>loose connectors</span></div>
+    <div class="stat"><b>173 mm</b><span>longest piece (plate 180)</span></div>
+    <div class="stat"><b>0.15 / 0.20</b><span>clearance: dovetail / groove</span></div>
+    <div class="stat"><b>≈1.0 L</b><span>printed volume</span></div>
   </div>
 
-  <section style="display:grid;gap:10px">
-    <h2>What I changed from your grid</h2>
-    <div class="changes">
-      <div class="card"><h3>Side-wall cuts</h3><p>Moved to y −652 and −482. Your middle row was exactly 180.0 mm, the whole plate, and the −662.2 cut left no room for a connector next to the side-wall handle recess (y −634 to −500).</p></div>
-      <div class="card"><h3>End wall: 3 pieces, not 2</h3><p>Your centre cut runs through the end wall's 140 mm handle recess, the place the case is lifted by. The end wall is now cut either side of it (x 12948 and 13124.7). That makes 7 pieces per part; the handle piece fits turned 45°.</p></div>
-      <div class="card"><h3>Part 7 stacks on part 6</h3><p>Its bottom edge sits on part 6's top edge, which completes the two handle recesses that cross that joint. Part 6 prints upside down, part 7 upright, so the joining edge is on the bed for every piece.</p></div>
-    </div>
+  <section class="two">
+    <div class="card"><h3>Vertical seams</h3><h2>Sliding dovetail in the cut face</h2>
+      <p>A rail runs the full height of one piece's cut face, standing 3.0 mm out and widening from 1.4 to 2.0 mm inside the 4.46 mm wall. The next piece has the matching slot, 0.15 mm larger all round. Slide the pieces together vertically; they cannot be pulled apart along the wall.</p></div>
+    <div class="card"><h3>Part 6 to part 7</h3><h2>Tongue and groove on the edges</h2>
+      <p>A 1.6 mm tongue, 3 mm tall, runs along part 6's top edge all the way round, through the corners and both handle recesses (traced from your model). Part 7's bottom edge has a 2.0 × 3.4 mm groove: 0.2 mm per side. It keeps the halves in line and stops them sliding.</p></div>
   </section>
 
   <section class="gallery">
-    <figure class="wide"><div class="img"><img src="img/assembled.png" alt="Assembled body with keys in the seams"></div>
-      <figcaption><b>Assembled.</b> Part 7 (blue-grey) on part 6 (cream). Red: the dovetail keys in the two end-wall seams; the side-wall seams have the same.</figcaption></figure>
-    <figure><div class="img"><img src="img/exploded.png" alt="Exploded view of the 14 pieces"></div>
-      <figcaption><b>Exploded.</b> 14 pieces with their pads on the inside faces and engraved names.</figcaption></figure>
-    <figure><div class="img"><img src="img/corner.png" alt="Corner close-up"></div>
-      <figcaption><b>End-wall seam.</b> One key runs from part 6 into part 7, beside the handle recess.</figcaption></figure>
-    <figure><div class="img"><img src="img/dovetail_section.png" alt="Section through a dovetail key"></div>
-      <figcaption><b>Section through a seam.</b> Half the dovetail groove is on each piece; the key (red) is wide at the floor and narrow at the mouth, so it pulls both halves together. 0.20 mm all round.</figcaption></figure>
-    <figure><div class="img"><img src="img/fit_test.png" alt="Fit test print"></div>
-      <figcaption><b>Fit test.</b> Print first: keys at 0.15 / 0.20 / 0.25 mm (1–3 notches) and dowel holes Ø5.2 / 5.4 / 5.6.</figcaption></figure>
-    <figure class="wide"><div class="img"><img src="img/as_printed.png" alt="Pieces as they sit on the plate"></div>
-      <figcaption><b>As printed.</b> Part 6 pieces upside down, part 7 upright. The E pieces carry the end-wall handles.</figcaption></figure>
+    <figure class="wide"><div class="img"><img src="img/assembled.png" alt="Assembled body, no visible connectors"></div>
+      <figcaption><b>Assembled.</b> Part 7 (blue-grey) on part 6 (cream). No connectors visible inside or out; only the seam lines.</figcaption></figure>
+    <figure class="wide"><div class="img"><img src="img/seam_parts.png" alt="Rail, slot and a slice through the seam"></div>
+      <figcaption><b>One seam.</b> Left: the rail on P6-CL's cut face. Middle: the slot in P6-E's face (and part 6's tongue on the top edge). Right: a slice through the assembled seam from above: the wall is continuous, the dovetail sits inside it.</figcaption></figure>
+    <figure><div class="img"><img src="img/exploded.png" alt="Exploded view"></div>
+      <figcaption><b>Exploded.</b> 14 pieces; the inside faces are plain.</figcaption></figure>
+    <figure><div class="img"><img src="img/tongue_groove.png" alt="Part 6 and part 7 pieces apart"></div>
+      <figcaption><b>Halves apart.</b> P6-BL with its tongue on the top edge, P7-BL above with the groove in its bottom edge.</figcaption></figure>
+    <figure><div class="img"><img src="img/fit_test.png" alt="Fit test"></div>
+      <figcaption><b>Fit test, print first.</b> Dovetails at 0.10 / 0.15 / 0.20 mm and grooves at 0.15 / 0.20 / 0.25 mm (1–3 notches).</figcaption></figure>
+    <figure><div class="img"><img src="img/as_printed.png" alt="Pieces as printed"></div>
+      <figcaption><b>As printed.</b> Upright, as they stand in the suitcase. The E pieces carry the end-wall handles.</figcaption></figure>
   </section>
 
-  <section class="card">
-    <h2>Connectors</h2>
-    <div class="tbl"><table>
-      <thead><tr><th>Joint</th><th>Connector</th><th>Size</th><th>Fit</th></tr></thead>
-      <tbody>
-        <tr><td>6 vertical seams</td><td>Pads on the inside, half a dovetail groove each; a printed key slides up from below through part 6 into part 7</td><td class="num">key 166 × 13.6 × 4.8</td><td class="num">0.20 / side</td></tr>
-        <tr><td>Part 6 to part 7, between seams</td><td>Dowels in pads either side of the joint</td><td class="num">Ø5 × 28</td><td class="num">hole Ø5.4</td></tr>
-        <tr><td>Pads</td><td>Key pads 28 wide × 7 deep, from z −170 (above the hard panel) to 5 mm below the top; dowel pads 16 × 9 × 48</td><td class="num">groove 14 → 10 wide, 5 deep</td><td class="num">—</td></tr>
-      </tbody>
-    </table></div>
+  <section style="display:grid;gap:10px">
+    <h2>What I changed from your grid</h2>
+    <div class="three">
+      <div class="card"><h3>Side-wall cuts</h3><p>y −652 and −482. Your middle row was exactly 180.0 mm, the whole plate; the longest piece is now 173 mm.</p></div>
+      <div class="card"><h3>End wall: 3 pieces</h3><p>Your centre cut runs through the end wall's 140 mm handle recess. It is cut either side of it instead (x 12948 and 13124.7): 7 pieces per part.</p></div>
+      <div class="card"><h3>Part 7 on part 6</h3><p>Stacked, which completes the two handle recesses that cross the joint. Both halves print upright.</p></div>
+    </div>
   </section>
 
-  <section class="steps">
+  <section class="two">
     <div class="card"><h2>Print</h2><ol>
-      <li><b>Fit test first</b> (<code>fit_test.stl</code>). If 0.20 is tight or loose, change <code>CLEAR_KEY</code> / <code>CLEAR_DOWEL</code> and rebuild.</li>
-      <li>One piece per plate from <code>exports/STL</code>; they are already in print orientation.</li>
-      <li>Tree supports only under the handle recesses: P6-BR, P7-BR, P6-E, P7-E.</li>
-      <li>5 mm brim on the thin A and B pieces. 0.2 mm layers, 4 walls, PLA or PETG.</li>
-      <li>Keys and dowels: <code>keys_and_dowels_plate.3mf</code>, flat, no supports.</li>
+      <li><b>Fit test first</b> (<code>fit_test.stl</code>). Adjust <code>CLEAR_RAIL</code> or the groove width if a fit is tight or loose, and rebuild.</li>
+      <li>One piece per plate from <code>exports/STL</code>, already upright and placed.</li>
+      <li>Tree supports under the handle recesses only: P6-BR, P7-BR, P6-E, P7-E.</li>
+      <li>5–8 mm brim on the thin straight pieces; keep elephant-foot compensation on so part 7's groove stays open.</li>
+      <li>0.2 mm layers, 4 walls, PLA or PETG.</li>
     </ol></div>
     <div class="card"><h2>Assemble</h2><ol>
-      <li>Stand the part 6 pieces in place (names are engraved inside).</li>
-      <li>Push the dowels into the holes along part 6's top edge.</li>
-      <li>Lower the part 7 pieces on: dowels into holes, seams in line.</li>
-      <li>From inside, slide a key up each of the 6 seam grooves from the bottom edge until it stops.</li>
-      <li>Fit the hard panel into the bottom of part 6; it also holds the keys in. A drop of CA glue makes it permanent.</li>
-    </ol></div>
+      <li>Part 6: stand a piece up and slide the next one down onto its rail. Work round the U.</li>
+      <li>Part 7: lower each piece past its neighbours and onto part 6's tongue.</li>
+      <li>Optional: CA glue or epoxy in the slots and groove makes it permanent.</li>
+    </ol>
+<pre>      end wall:  CL | E | CR
+ left wall:  CL             CR  right wall
+             BL             BR  (side handle)
+             AL             AR
+                (open end)</pre>
+      <p style="font-size:13.5px;color:var(--muted)">Each position has a P6 (lower) and a P7 (upper) piece. Engraved labels are off to keep the faces clean; pencil the names on the cut faces.</p>
+    </div>
   </section>
 
   <section class="card">
     <h2>Pieces</h2>
     <div class="tbl"><table>
-      <thead><tr><th>Piece</th><th>Where</th><th>On the plate (mm)</th><th>Volume</th><th>Supports</th></tr></thead>
-      <tbody id="pieces"></tbody>
+      <thead><tr><th>Piece</th><th>Where</th><th>On the plate (mm)</th><th>Volume (P6 / P7)</th><th>Supports</th></tr></thead>
+      <tbody>
+        <tr><td class="num">AL, AR</td><td>side walls, open end</td><td class="num">4.5 × 138 × 95</td><td class="num">57 / 54 cm³</td><td></td></tr>
+        <tr><td class="num">BL</td><td>left side wall, middle</td><td class="num">4.5 × 173 × 95</td><td class="num">71 / 68 cm³</td><td></td></tr>
+        <tr><td class="num">BR</td><td>right side wall, middle, with the handle</td><td class="num">15.6 × 173 × 95</td><td class="num">76 / 73 cm³</td><td><span class="tag">recess</span></td></tr>
+        <tr><td class="num">CL, CR</td><td>corners</td><td class="num">75 × 152 × 95</td><td class="num">89 / 85 cm³</td><td></td></tr>
+        <tr><td class="num">E</td><td>end wall middle, with the handle</td><td class="num">129 × 129 × 95, turned 45°</td><td class="num">76 / 84 cm³</td><td><span class="tag">recess</span></td></tr>
+      </tbody>
     </table></div>
   </section>
 
   <div class="callout">
-    <p><b>Limits.</b> The pieces are cut from the display meshes saved in the .3dm, so corner fillets are slightly faceted; export a fine STL or STEP from Rhino for smoother prints. Part 7's mesh had a small gap in its bottom face, closed by trimming 0.02 mm. The print check passes on every piece except a 0.59 mm rib inside the engraved "A" on P7-AL (cosmetic). No strength check was run.</p>
+    <p><b>Checks and limits.</b> Clearances measured on the solids (rail 0.150 mm, tongue 0.200 mm). No two pieces overlap when assembled. All 14 pieces pass the FDM print check; the thinnest wall is 1.05 mm, beside the slots, so slide pieces together gently and in line. The pieces are cut from the display meshes in the .3dm, so corner fillets are slightly faceted; export a fine STL or STEP from Rhino for smoother prints. No strength check was run.</p>
   </div>
-  <p style="color:var(--muted);font-size:13.5px">Files on branch <code>claude/keen-ride-4okiiq</code>, folder <code>suitcase_print/</code>. Rhino: <code>rhino_part6_connectors.step</code> and <code>rhino_part7_connectors.step</code> land on your parts in place.</p>
+  <p style="color:var(--muted);font-size:13.5px">Files on branch <code>claude/keen-ride-4okiiq</code>, folder <code>suitcase_print/</code>. Rhino: <code>rhino_part6_joints.step</code> and <code>rhino_part7_joints.step</code> land on your parts in place.</p>
 </div>
-
-<script>
-const P = [
-  ["AL", "left side wall, open end", "13.5 × 135 × 92", "64", ""], ["AR", "right side wall, open end", "13.5 × 135 × 92", "64", ""],
-  ["BL", "left side wall, middle", "13.5 × 170 × 92", "85", ""], ["BR", "right side wall, middle (handle)", "15.6 × 170 × 92", "87 / 86", "yes"],
-  ["CL", "left corner", "72 × 152 × 92", "102", ""], ["CR", "right corner", "72 × 152 × 92", "102", ""],
-  ["E", "end wall middle (handle)", "130 × 130 × 92, turned 45°", "87 / 98", "yes"],
-];
-const tb = document.getElementById("pieces");
-for (const part of [6, 7]) for (const [k, where, size, vol, sup] of P) {
-  const v = vol.includes("/") ? vol.split(" / ")[part - 6] : vol;
-  const tr = document.createElement("tr");
-  tr.innerHTML = `<td class="num">P${part}-${k}</td><td>${where}</td><td class="num">${size}</td><td class="num">${v} cm³</td><td>${sup ? '<span class="tag">recess</span>' : ""}</td>`;
-  tb.appendChild(tr);
-}
-</script>
