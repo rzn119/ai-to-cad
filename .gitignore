@@ -1,3 +1,5 @@
 joints/tmp/
 suitcase/tmp/
+suitcase_print/tmp/
+suitcase_print/build/assembled/
 __pycache__/

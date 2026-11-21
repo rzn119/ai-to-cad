@@ -1,0 +1,166 @@
+{
+ "source": "/root/.claude/uploads/60d42c45-dd25-541d-9c49-cd94b7e54d81/8f445fd2-part_6_and_7.3dm",
+ "repairs": [
+  "part 7: closed a small gap in its bottom face (bottom trimmed 0.02 mm)"
+ ],
+ "pieces": {
+  "P6-AL": {
+   "size_mm": [
+    13.5,
+    135.0,
+    92.3
+   ],
+   "turned_on_plate_deg": 0,
+   "volume_cm3": 64.5,
+   "watertight": true,
+   "fits_180_plate_with_5mm_margin": true
+  },
+  "P6-AR": {
+   "size_mm": [
+    13.5,
+    135.0,
+    92.3
+   ],
+   "turned_on_plate_deg": 0,
+   "volume_cm3": 64.5,
+   "watertight": true,
+   "fits_180_plate_with_5mm_margin": true
+  },
+  "P6-BL": {
+   "size_mm": [
+    13.5,
+    170.0,
+    92.3
+   ],
+   "turned_on_plate_deg": 0,
+   "volume_cm3": 84.7,
+   "watertight": true,
+   "fits_180_plate_with_5mm_margin": true
+  },
+  "P6-BR": {
+   "size_mm": [
+    15.6,
+    170.0,
+    92.3
+   ],
+   "turned_on_plate_deg": 0,
+   "volume_cm3": 86.8,
+   "watertight": true,
+   "fits_180_plate_with_5mm_margin": true
+  },
+  "P6-CL": {
+   "size_mm": [
+    72.4,
+    152.2,
+    92.3
+   ],
+   "turned_on_plate_deg": 0,
+   "volume_cm3": 102.6,
+   "watertight": true,
+   "fits_180_plate_with_5mm_margin": true
+  },
+  "P6-CR": {
+   "size_mm": [
+    72.4,
+    152.2,
+    92.3
+   ],
+   "turned_on_plate_deg": 0,
+   "volume_cm3": 102.6,
+   "watertight": true,
+   "fits_180_plate_with_5mm_margin": true
+  },
+  "P6-E": {
+   "size_mm": [
+    129.5,
+    129.5,
+    92.3
+   ],
+   "turned_on_plate_deg": 45,
+   "volume_cm3": 86.9,
+   "watertight": true,
+   "fits_180_plate_with_5mm_margin": true
+  },
+  "P7-AL": {
+   "size_mm": [
+    13.5,
+    135.0,
+    92.4
+   ],
+   "turned_on_plate_deg": 0,
+   "volume_cm3": 63.9,
+   "watertight": true,
+   "fits_180_plate_with_5mm_margin": true
+  },
+  "P7-AR": {
+   "size_mm": [
+    13.5,
+    135.0,
+    92.3
+   ],
+   "turned_on_plate_deg": 0,
+   "volume_cm3": 63.8,
+   "watertight": true,
+   "fits_180_plate_with_5mm_margin": true
+  },
+  "P7-BL": {
+   "size_mm": [
+    13.5,
+    170.0,
+    92.4
+   ],
+   "turned_on_plate_deg": 0,
+   "volume_cm3": 84.1,
+   "watertight": true,
+   "fits_180_plate_with_5mm_margin": true
+  },
+  "P7-BR": {
+   "size_mm": [
+    15.6,
+    170.0,
+    92.3
+   ],
+   "turned_on_plate_deg": 0,
+   "volume_cm3": 86.2,
+   "watertight": true,
+   "fits_180_plate_with_5mm_margin": true
+  },
+  "P7-CL": {
+   "size_mm": [
+    72.4,
+    152.2,
+    92.4
+   ],
+   "turned_on_plate_deg": 0,
+   "volume_cm3": 101.8,
+   "watertight": true,
+   "fits_180_plate_with_5mm_margin": true
+  },
+  "P7-CR": {
+   "size_mm": [
+    72.4,
+    152.2,
+    92.3
+   ],
+   "turned_on_plate_deg": 0,
+   "volume_cm3": 101.7,
+   "watertight": true,
+   "fits_180_plate_with_5mm_margin": true
+  },
+  "P7-E": {
+   "size_mm": [
+    133.0,
+    133.0,
+    92.3
+   ],
+   "turned_on_plate_deg": 45,
+   "volume_cm3": 97.5,
+   "watertight": true,
+   "fits_180_plate_with_5mm_margin": true
+  }
+ },
+ "pad_clash_mm3": {
+  "part 6": 0.0,
+  "part 7": 0.0
+ }
+}
