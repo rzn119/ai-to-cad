@@ -1,0 +1,633 @@
+{
+ "frame": {
+  "DX": 494.0100000000002,
+  "DZ": 92.37,
+  "ZJ": -84.87,
+  "ZF": -174.395,
+  "XC": 13530.33
+ },
+ "ring_keys": [
+  {
+   "x": 13372.052,
+   "y": -801.0,
+   "along_y": true,
+   "on": "P7-B-L",
+   "into": "P6-B-L"
+  },
+  {
+   "x": 13392.0,
+   "y": -819.994,
+   "along_y": false,
+   "on": "P7-B-L",
+   "into": "P6-B-L"
+  },
+  {
+   "x": 13437.0,
+   "y": -819.994,
+   "along_y": false,
+   "on": "P7-B-L",
+   "into": "P6-B-L"
+  },
+  {
+   "x": 13482.0,
+   "y": -819.994,
+   "along_y": false,
+   "on": "P7-B-L",
+   "into": "P6-B-L"
+  },
+  {
+   "x": 13522.0,
+   "y": -819.994,
+   "along_y": false,
+   "on": "P7-B-L",
+   "into": "P6-B-L"
+  },
+  {
+   "x": 13688.608,
+   "y": -801.0,
+   "along_y": true,
+   "on": "P7-B-R",
+   "into": "P6-B-R"
+  },
+  {
+   "x": 13539.0,
+   "y": -819.994,
+   "along_y": false,
+   "on": "P7-B-R",
+   "into": "P6-B-R"
+  },
+  {
+   "x": 13584.0,
+   "y": -819.994,
+   "along_y": false,
+   "on": "P7-B-R",
+   "into": "P6-B-R"
+  },
+  {
+   "x": 13629.0,
+   "y": -819.994,
+   "along_y": false,
+   "on": "P7-B-R",
+   "into": "P6-B-R"
+  },
+  {
+   "x": 13668.0,
+   "y": -819.994,
+   "along_y": false,
+   "on": "P7-B-R",
+   "into": "P6-B-R"
+  },
+  {
+   "x": 13371.851,
+   "y": -771.0,
+   "along_y": true,
+   "on": "P7-S1-L",
+   "into": "P6-S1-L"
+  },
+  {
+   "x": 13371.851,
+   "y": -726.0,
+   "along_y": true,
+   "on": "P7-S1-L",
+   "into": "P6-S1-L"
+  },
+  {
+   "x": 13371.851,
+   "y": -681.0,
+   "along_y": true,
+   "on": "P7-S1-L",
+   "into": "P6-S1-L"
+  },
+  {
+   "x": 13688.806,
+   "y": -771.0,
+   "along_y": true,
+   "on": "P7-S1-R",
+   "into": "P6-S1-R"
+  },
+  {
+   "x": 13688.806,
+   "y": -726.0,
+   "along_y": true,
+   "on": "P7-S1-R",
+   "into": "P6-S1-R"
+  },
+  {
+   "x": 13688.806,
+   "y": -681.0,
+   "along_y": true,
+   "on": "P7-S1-R",
+   "into": "P6-S1-R"
+  },
+  {
+   "x": 13371.851,
+   "y": -653.0,
+   "along_y": true,
+   "on": "P7-S1-L",
+   "into": "P6-S2-L"
+  },
+  {
+   "x": 13688.806,
+   "y": -653.0,
+   "along_y": true,
+   "on": "P7-S1-R",
+   "into": "P6-S2-R"
+  },
+  {
+   "x": 13371.842,
+   "y": -636.0,
+   "along_y": true,
+   "on": "P7-S2-L",
+   "into": "P6-S2-L"
+  },
+  {
+   "x": 13371.842,
+   "y": -591.0,
+   "along_y": true,
+   "on": "P7-S2-L",
+   "into": "P6-S2-L"
+  },
+  {
+   "x": 13371.842,
+   "y": -546.0,
+   "along_y": true,
+   "on": "P7-S2-L",
+   "into": "P6-S2-L"
+  },
+  {
+   "x": 13371.842,
+   "y": -501.0,
+   "along_y": true,
+   "on": "P7-S2-L",
+   "into": "P6-S2-L"
+  },
+  {
+   "x": 13688.806,
+   "y": -636.0,
+   "along_y": true,
+   "on": "P7-S2-R",
+   "into": "P6-S2-R"
+  },
+  {
+   "x": 13677.646,
+   "y": -591.0,
+   "along_y": true,
+   "on": "P7-S2-R",
+   "into": "P6-S2-R"
+  },
+  {
+   "x": 13677.646,
+   "y": -546.0,
+   "along_y": true,
+   "on": "P7-S2-R",
+   "into": "P6-S2-R"
+  },
+  {
+   "x": 13677.646,
+   "y": -508.0,
+   "along_y": true,
+   "on": "P7-S2-R",
+   "into": "P6-S2-R"
+  },
+  {
+   "x": 13371.842,
+   "y": -473.0,
+   "along_y": true,
+   "on": "P7-S2-L",
+   "into": "P6-C-L"
+  },
+  {
+   "x": 13688.806,
+   "y": -473.0,
+   "along_y": true,
+   "on": "P7-S2-R",
+   "into": "P6-C-R"
+  },
+  {
+   "x": 13371.842,
+   "y": -456.0,
+   "along_y": true,
+   "on": "P7-C-L",
+   "into": "P6-C-L"
+  },
+  {
+   "x": 13371.842,
+   "y": -411.0,
+   "along_y": true,
+   "on": "P7-C-L",
+   "into": "P6-C-L"
+  },
+  {
+   "x": 13371.842,
+   "y": -366.0,
+   "along_y": true,
+   "on": "P7-C-L",
+   "into": "P6-C-L"
+  },
+  {
+   "x": 13392.0,
+   "y": -324.458,
+   "along_y": false,
+   "on": "P7-C-L",
+   "into": "P6-C-L"
+  },
+  {
+   "x": 13437.0,
+   "y": -324.458,
+   "along_y": false,
+   "on": "P7-C-L",
+   "into": "P6-C-L"
+  },
+  {
+   "x": 13482.0,
+   "y": -333.37,
+   "along_y": false,
+   "on": "P7-C-L",
+   "into": "P6-C-L"
+  },
+  {
+   "x": 13522.0,
+   "y": -333.362,
+   "along_y": false,
+   "on": "P7-C-L",
+   "into": "P6-C-L"
+  },
+  {
+   "x": 13688.806,
+   "y": -456.0,
+   "along_y": true,
+   "on": "P7-C-R",
+   "into": "P6-C-R"
+  },
+  {
+   "x": 13688.806,
+   "y": -411.0,
+   "along_y": true,
+   "on": "P7-C-R",
+   "into": "P6-C-R"
+  },
+  {
+   "x": 13688.806,
+   "y": -366.0,
+   "along_y": true,
+   "on": "P7-C-R",
+   "into": "P6-C-R"
+  },
+  {
+   "x": 13539.0,
+   "y": -333.362,
+   "along_y": false,
+   "on": "P7-C-R",
+   "into": "P6-C-R"
+  },
+  {
+   "x": 13603.0,
+   "y": -324.458,
+   "along_y": false,
+   "on": "P7-C-R",
+   "into": "P6-C-R"
+  },
+  {
+   "x": 13648.0,
+   "y": -324.458,
+   "along_y": false,
+   "on": "P7-C-R",
+   "into": "P6-C-R"
+  }
+ ],
+ "floor": [
+  {
+   "kind": "key",
+   "on": "P7-B-L",
+   "into": "P7-S1-L",
+   "x": 13420.33,
+   "y": -779.46,
+   "axis": "y",
+   "sign": 1,
+   "z": -174.395
+  },
+  {
+   "kind": "key",
+   "on": "P7-S1-L",
+   "into": "P7-F2-L",
+   "x": 13420.33,
+   "y": -639.23,
+   "axis": "y",
+   "sign": 1,
+   "z": -174.395
+  },
+  {
+   "kind": "key",
+   "on": "P7-F3-L",
+   "into": "P7-F2-L",
+   "x": 13420.33,
+   "y": -464.23,
+   "axis": "y",
+   "sign": -1,
+   "z": -174.395
+  },
+  {
+   "kind": "wallkey",
+   "on": "P7-C-L",
+   "into": "P7-F3-L",
+   "x": 13420.33,
+   "y": -326.69,
+   "axis": "y",
+   "sign": -1,
+   "z": -174.395
+  },
+  {
+   "kind": "key",
+   "on": "P7-B-L",
+   "into": "P7-S1-L",
+   "x": 13490.33,
+   "y": -779.46,
+   "axis": "y",
+   "sign": 1,
+   "z": -174.395
+  },
+  {
+   "kind": "key",
+   "on": "P7-S1-L",
+   "into": "P7-F2-L",
+   "x": 13490.33,
+   "y": -639.23,
+   "axis": "y",
+   "sign": 1,
+   "z": -174.395
+  },
+  {
+   "kind": "key",
+   "on": "P7-F3-L",
+   "into": "P7-F2-L",
+   "x": 13490.33,
+   "y": -464.23,
+   "axis": "y",
+   "sign": -1,
+   "z": -174.395
+  },
+  {
+   "kind": "wallkey",
+   "on": "P7-C-L",
+   "into": "P7-F3-L",
+   "x": 13490.33,
+   "y": -326.69,
+   "axis": "y",
+   "sign": -1,
+   "z": -174.395
+  },
+  {
+   "kind": "wallkey",
+   "on": "P7-S2-L",
+   "into": "P7-F2-L",
+   "x": 13374.08,
+   "y": -600.0,
+   "axis": "x",
+   "sign": 1,
+   "z": -174.395
+  },
+  {
+   "kind": "wallkey",
+   "on": "P7-S2-L",
+   "into": "P7-F2-L",
+   "x": 13374.08,
+   "y": -505.0,
+   "axis": "x",
+   "sign": 1,
+   "z": -174.395
+  },
+  {
+   "kind": "wallkey",
+   "on": "P7-C-L",
+   "into": "P7-F3-L",
+   "x": 13374.08,
+   "y": -430.0,
+   "axis": "x",
+   "sign": 1,
+   "z": -174.395
+  },
+  {
+   "kind": "wallkey",
+   "on": "P7-C-L",
+   "into": "P7-F3-L",
+   "x": 13374.08,
+   "y": -370.0,
+   "axis": "x",
+   "sign": 1,
+   "z": -174.395
+  },
+  {
+   "kind": "key",
+   "on": "P7-B-R",
+   "into": "P7-S1-R",
+   "x": 13640.33,
+   "y": -779.46,
+   "axis": "y",
+   "sign": 1,
+   "z": -174.395
+  },
+  {
+   "kind": "key",
+   "on": "P7-S1-R",
+   "into": "P7-F2-R",
+   "x": 13640.33,
+   "y": -639.23,
+   "axis": "y",
+   "sign": 1,
+   "z": -174.395
+  },
+  {
+   "kind": "key",
+   "on": "P7-F3-R",
+   "into": "P7-F2-R",
+   "x": 13640.33,
+   "y": -464.23,
+   "axis": "y",
+   "sign": -1,
+   "z": -174.395
+  },
+  {
+   "kind": "wallkey",
+   "on": "P7-C-R",
+   "into": "P7-F3-R",
+   "x": 13640.33,
+   "y": -326.69,
+   "axis": "y",
+   "sign": -1,
+   "z": -174.395
+  },
+  {
+   "kind": "key",
+   "on": "P7-B-R",
+   "into": "P7-S1-R",
+   "x": 13570.33,
+   "y": -779.46,
+   "axis": "y",
+   "sign": 1,
+   "z": -174.395
+  },
+  {
+   "kind": "key",
+   "on": "P7-S1-R",
+   "into": "P7-F2-R",
+   "x": 13570.33,
+   "y": -639.23,
+   "axis": "y",
+   "sign": 1,
+   "z": -174.395
+  },
+  {
+   "kind": "key",
+   "on": "P7-F3-R",
+   "into": "P7-F2-R",
+   "x": 13570.33,
+   "y": -464.23,
+   "axis": "y",
+   "sign": -1,
+   "z": -174.395
+  },
+  {
+   "kind": "wallkey",
+   "on": "P7-C-R",
+   "into": "P7-F3-R",
+   "x": 13570.33,
+   "y": -326.69,
+   "axis": "y",
+   "sign": -1,
+   "z": -174.395
+  },
+  {
+   "kind": "wallkey",
+   "on": "P7-S2-R",
+   "into": "P7-F2-R",
+   "x": 13686.58,
+   "y": -600.0,
+   "axis": "x",
+   "sign": -1,
+   "z": -174.395
+  },
+  {
+   "kind": "wallkey",
+   "on": "P7-S2-R",
+   "into": "P7-F2-R",
+   "x": 13686.58,
+   "y": -505.0,
+   "axis": "x",
+   "sign": -1,
+   "z": -174.395
+  },
+  {
+   "kind": "wallkey",
+   "on": "P7-C-R",
+   "into": "P7-F3-R",
+   "x": 13686.58,
+   "y": -430.0,
+   "axis": "x",
+   "sign": -1,
+   "z": -174.395
+  },
+  {
+   "kind": "wallkey",
+   "on": "P7-C-R",
+   "into": "P7-F3-R",
+   "x": 13686.58,
+   "y": -370.0,
+   "axis": "x",
+   "sign": -1,
+   "z": -174.395
+  },
+  {
+   "kind": "bayonet",
+   "on": "P7-B-L",
+   "into": "P7-B-R",
+   "x": 13530.33,
+   "y": -795.0,
+   "axis": "x",
+   "sign": 1,
+   "z": -174.395
+  },
+  {
+   "kind": "bayonet",
+   "on": "P7-S1-L",
+   "into": "P7-S1-R",
+   "x": 13530.33,
+   "y": -700.0,
+   "axis": "x",
+   "sign": 1,
+   "z": -174.395
+  },
+  {
+   "kind": "bayonet",
+   "on": "P7-S1-L",
+   "into": "P7-S1-R",
+   "x": 13530.33,
+   "y": -660.0,
+   "axis": "x",
+   "sign": 1,
+   "z": -174.395
+  },
+  {
+   "kind": "bayonet",
+   "on": "P7-F2-L",
+   "into": "P7-F2-R",
+   "x": 13530.33,
+   "y": -575.0,
+   "axis": "x",
+   "sign": 1,
+   "z": -174.395
+  },
+  {
+   "kind": "bayonet",
+   "on": "P7-F2-L",
+   "into": "P7-F2-R",
+   "x": 13530.33,
+   "y": -500.0,
+   "axis": "x",
+   "sign": 1,
+   "z": -174.395
+  },
+  {
+   "kind": "bayonet",
+   "on": "P7-F3-L",
+   "into": "P7-F3-R",
+   "x": 13530.33,
+   "y": -410.0,
+   "axis": "x",
+   "sign": 1,
+   "z": -174.395
+  },
+  {
+   "kind": "bayonet",
+   "on": "P7-F3-L",
+   "into": "P7-F3-R",
+   "x": 13530.33,
+   "y": -352.0,
+   "axis": "x",
+   "sign": 1,
+   "z": -174.395
+  }
+ ],
+ "report": {
+  "source": "/root/.claude/uploads/60d42c45-dd25-541d-9c49-cd94b7e54d81/b7a30aba-part_6_and_7.3dm",
+  "repairs": [
+   "P6-B-L: closed gaps in the saved display mesh",
+   "P6-B-R: closed gaps in the saved display mesh",
+   "P6-C-R: closed gaps in the saved display mesh",
+   "P7-B-L: closed gaps in the saved display mesh",
+   "P7-B-R: closed gaps in the saved display mesh",
+   "P7-S1-L: closed gaps in the saved display mesh",
+   "P7-S1-R: closed gaps in the saved display mesh",
+   "P7-F2-L: closed gaps in the saved display mesh",
+   "P7-F2-R: closed gaps in the saved display mesh",
+   "P7-F3-L: closed gaps in the saved display mesh",
+   "P7-F3-R: closed gaps in the saved display mesh",
+   "P7-B-L: display mesh would not close cleanly; rebuilt as the mirror of P7-B-R",
+   "P6-C-R: rebuilt as the mirror of P6-C-L (volumes agree within 0.5 %); the repaired mesh had surfaces inside it"
+  ],
+  "changes": [
+   "frame lock strips joined to the part 6 wall pieces they sit on",
+   "floor seam between P7-S1 and P7-F2 moved from y -644.23 to -639.23 (F2 was 180.0 mm long)",
+   "floor panels kept 0.2 mm clear of the walls all round (corners included), so they drop in between the walls"
+  ]
+ }
+}

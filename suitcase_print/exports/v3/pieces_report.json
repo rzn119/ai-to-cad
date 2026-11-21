@@ -1,0 +1,266 @@
+{
+ "pieces": {
+  "P6-B-L": {
+   "size_mm": [
+    160.7,
+    42.8,
+    92.3
+   ],
+   "turned_on_plate_deg": 0,
+   "volume_cm3": 114.0,
+   "watertight": true,
+   "fits_180_plate_with_2mm_margin_each_side": true
+  },
+  "P6-B-R": {
+   "size_mm": [
+    160.7,
+    42.8,
+    92.3
+   ],
+   "turned_on_plate_deg": 0,
+   "volume_cm3": 114.5,
+   "watertight": true,
+   "fits_180_plate_with_2mm_margin_each_side": true
+  },
+  "P6-C-L": {
+   "size_mm": [
+    160.7,
+    160.0,
+    92.3
+   ],
+   "turned_on_plate_deg": 0,
+   "volume_cm3": 176.7,
+   "watertight": true,
+   "fits_180_plate_with_2mm_margin_each_side": true
+  },
+  "P6-C-R": {
+   "size_mm": [
+    160.7,
+    160.0,
+    92.3
+   ],
+   "turned_on_plate_deg": 0,
+   "volume_cm3": 176.8,
+   "watertight": true,
+   "fits_180_plate_with_2mm_margin_each_side": true
+  },
+  "P6-S1-L": {
+   "size_mm": [
+    11.7,
+    117.2,
+    92.3
+   ],
+   "turned_on_plate_deg": 0,
+   "volume_cm3": 58.7,
+   "watertight": true,
+   "fits_180_plate_with_2mm_margin_each_side": true
+  },
+  "P6-S1-R": {
+   "size_mm": [
+    11.7,
+    117.2,
+    92.3
+   ],
+   "turned_on_plate_deg": 0,
+   "volume_cm3": 58.6,
+   "watertight": true,
+   "fits_180_plate_with_2mm_margin_each_side": true
+  },
+  "P6-S2-L": {
+   "size_mm": [
+    130.7,
+    130.7,
+    92.3
+   ],
+   "turned_on_plate_deg": 45,
+   "volume_cm3": 87.7,
+   "watertight": true,
+   "fits_180_plate_with_2mm_margin_each_side": true
+  },
+  "P6-S2-R": {
+   "size_mm": [
+    130.7,
+    130.7,
+    92.3
+   ],
+   "turned_on_plate_deg": 45,
+   "volume_cm3": 92.8,
+   "watertight": true,
+   "fits_180_plate_with_2mm_margin_each_side": true
+  },
+  "P7-B-L": {
+   "size_mm": [
+    163.7,
+    45.8,
+    96.4
+   ],
+   "turned_on_plate_deg": 0,
+   "volume_cm3": 115.6,
+   "watertight": true,
+   "fits_180_plate_with_2mm_margin_each_side": true
+  },
+  "P7-B-R": {
+   "size_mm": [
+    160.7,
+    45.8,
+    96.4
+   ],
+   "turned_on_plate_deg": 0,
+   "volume_cm3": 115.2,
+   "watertight": true,
+   "fits_180_plate_with_2mm_margin_each_side": true
+  },
+  "P7-C-L": {
+   "size_mm": [
+    160.7,
+    142.0,
+    96.4
+   ],
+   "turned_on_plate_deg": 0,
+   "volume_cm3": 122.3,
+   "watertight": true,
+   "fits_180_plate_with_2mm_margin_each_side": true
+  },
+  "P7-C-R": {
+   "size_mm": [
+    160.7,
+    142.0,
+    96.4
+   ],
+   "turned_on_plate_deg": 0,
+   "volume_cm3": 122.3,
+   "watertight": true,
+   "fits_180_plate_with_2mm_margin_each_side": true
+  },
+  "P7-F2-L": {
+   "size_mm": [
+    159.1,
+    175.0,
+    5.7
+   ],
+   "turned_on_plate_deg": 0,
+   "volume_cm3": 155.1,
+   "watertight": true,
+   "fits_180_plate_with_2mm_margin_each_side": true
+  },
+  "P7-F2-R": {
+   "size_mm": [
+    156.0,
+    175.0,
+    5.7
+   ],
+   "turned_on_plate_deg": 0,
+   "volume_cm3": 154.4,
+   "watertight": true,
+   "fits_180_plate_with_2mm_margin_each_side": true
+  },
+  "P7-F3-L": {
+   "size_mm": [
+    159.1,
+    140.3,
+    5.7
+   ],
+   "turned_on_plate_deg": 0,
+   "volume_cm3": 121.8,
+   "watertight": true,
+   "fits_180_plate_with_2mm_margin_each_side": true
+  },
+  "P7-F3-R": {
+   "size_mm": [
+    156.0,
+    140.3,
+    5.7
+   ],
+   "turned_on_plate_deg": 0,
+   "volume_cm3": 121.1,
+   "watertight": true,
+   "fits_180_plate_with_2mm_margin_each_side": true
+  },
+  "P7-S1-L": {
+   "size_mm": [
+    163.7,
+    143.2,
+    96.4
+   ],
+   "turned_on_plate_deg": 0,
+   "volume_cm3": 181.0,
+   "watertight": true,
+   "fits_180_plate_with_2mm_margin_each_side": true
+  },
+  "P7-S1-R": {
+   "size_mm": [
+    160.7,
+    143.2,
+    96.4
+   ],
+   "turned_on_plate_deg": 0,
+   "volume_cm3": 180.2,
+   "watertight": true,
+   "fits_180_plate_with_2mm_margin_each_side": true
+  },
+  "P7-S2-L": {
+   "size_mm": [
+    130.4,
+    130.4,
+    96.4
+   ],
+   "turned_on_plate_deg": 45,
+   "volume_cm3": 74.7,
+   "watertight": true,
+   "fits_180_plate_with_2mm_margin_each_side": true
+  },
+  "P7-S2-R": {
+   "size_mm": [
+    130.4,
+    130.4,
+    96.4
+   ],
+   "turned_on_plate_deg": 45,
+   "volume_cm3": 79.9,
+   "watertight": true,
+   "fits_180_plate_with_2mm_margin_each_side": true
+  }
+ },
+ "overlap_check": {
+  "touching_pairs": 62,
+  "largest_overlap_mm3": 1.0819,
+  "clashes": [
+   [
+    "P6-B-L",
+    "P6-S1-L",
+    0.02,
+    0.0001
+   ],
+   [
+    "P6-B-R",
+    "P6-S1-R",
+    0.02,
+    0.0001
+   ],
+   [
+    "P7-B-L",
+    "P7-B-R",
+    1.082,
+    0.002
+   ],
+   [
+    "P7-B-L",
+    "P7-S1-L",
+    0.019,
+    0.0
+   ],
+   [
+    "P7-B-R",
+    "P7-S1-R",
+    0.012,
+    0.0
+   ],
+   [
+    "P7-S1-L",
+    "P7-S2-L",
+    0.606,
+    0.0014
+   ]
+  ]
+ }
+}

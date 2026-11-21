@@ -2,7 +2,7 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: header + stats; the joints; what changed; images; print and assemble; pieces; limits. */
+/* Layout: header + stats; the joints; images; changes; print and assemble; checks. */
 :root {
   --bg: #f3f4f5; --surface: #ffffff; --fg: #1d2125; --muted: #5c646c; --line: #d3d7db;
   --accent: #b23a2a; --accent-soft: #f6e3df; --img: #f1f1f1;
@@ -30,10 +30,10 @@ p { margin: 0; }
 .stat b { font: 600 20px var(--font-display); font-variant-numeric: tabular-nums; }
 .stat span { font-size: 12.5px; color: var(--muted); }
 .card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; display: grid; gap: 10px; min-width: 0; }
+.card p { font-size: 14px; }
 .three { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
 .two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
 @media (max-width: 860px) { .three, .two { grid-template-columns: minmax(0, 1fr); } }
-.card p { font-size: 14px; }
 .gallery { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
 @media (max-width: 760px) { .gallery { grid-template-columns: minmax(0, 1fr); } }
 figure { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; display: grid; }
@@ -48,95 +48,74 @@ th { text-align: left; font: 600 11.5px var(--font-mono); text-transform: upperc
 td { padding: 8px 10px 8px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
 td.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
 ol { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
-pre { margin: 0; font: 13px/1.45 var(--font-mono); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; overflow-x: auto; }
 .callout { background: var(--accent-soft); border-radius: 8px; padding: 12px 14px; }
 code { font-family: var(--font-mono); font-size: 12.5px; background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; overflow-wrap: anywhere; }
-.tag { font: 500 11.5px var(--font-mono); padding: 2px 6px; border-radius: 4px; background: var(--accent-soft); color: var(--accent); white-space: nowrap; }
 </style>
 
 <div class="wrap">
   <header style="display:grid;gap:8px">
     <h1>Suitcase Body Print Kit</h1>
-    <p class="lede">Parts 6 and 7 cut into pieces that fit a Bambu A1 mini (180 × 180 × 180 mm). Every joint is inside the cut faces: nothing on the inside or outside of the shell, only the seam line shows. Built on <code>part_6_and_7.3dm</code>, in its own coordinates.</p>
+    <p class="lede">Your updated parts 6 and 7, split in Rhino into 20 pieces for a Bambu A1 mini, joined by hidden joints with 0.2 mm clearance. Part 6 (the upper ring) sits on part 7 (the tray with the floor). The joints are only where you asked: between part 6's bottom faces and part 7's top faces, and in part 7's floor.</p>
   </header>
 
   <div class="stats">
-    <div class="stat"><b>14</b><span>pieces, 7 per part</span></div>
-    <div class="stat"><b>0</b><span>loose connectors</span></div>
-    <div class="stat"><b>173 mm</b><span>longest piece (plate 180)</span></div>
-    <div class="stat"><b>0.15 / 0.20</b><span>clearance: dovetail / groove</span></div>
-    <div class="stat"><b>≈1.0 L</b><span>printed volume</span></div>
+    <div class="stat"><b>20</b><span>pieces (8 in part 6, 12 in part 7)</span></div>
+    <div class="stat"><b>41</b><span>keys, part 7 top → part 6</span></div>
+    <div class="stat"><b>24 + 7</b><span>floor keys + bayonet T-locks</span></div>
+    <div class="stat"><b>0.2 mm</b><span>clearance everywhere</span></div>
+    <div class="stat"><b>0</b><span>loose parts</span></div>
   </div>
 
-  <section class="two">
-    <div class="card"><h3>Vertical seams</h3><h2>Sliding dovetail in the cut face</h2>
-      <p>A rail runs the full height of one piece's cut face, standing 3.0 mm out and widening from 1.4 to 2.0 mm inside the 4.46 mm wall. The next piece has the matching slot, 0.15 mm larger all round. Slide the pieces together vertically; they cannot be pulled apart along the wall.</p></div>
-    <div class="card"><h3>Part 6 to part 7</h3><h2>Tongue and groove on the edges</h2>
-      <p>A 1.6 mm tongue, 3 mm tall, runs along part 6's top edge all the way round, through the corners and both handle recesses (traced from your model). Part 7's bottom edge has a 2.0 × 3.4 mm groove: 0.2 mm per side. It keeps the halves in line and stops them sliding.</p></div>
+  <section class="three">
+    <div class="card"><h3>Part 7 top → part 6 bottom</h3><h2>Keys and pockets</h2>
+      <p>Keys 12 × 1.6 × 4 mm stand on part 7's top edge and drop into pockets 12.4 × 2.0 × 4.4 mm in part 6's bottom edge. Your seams in the two parts are 18 mm apart, so every part 6 piece bridges a part 7 seam and its keys lock the two pieces below together.</p></div>
+    <div class="card"><h3>Part 7 floor</h3><h2>Floor keys</h2>
+      <p>Tabs 12 × 2.0 mm stand 3 mm out of one edge, in the middle of the 5.7 mm floor, into pockets 12.4 × 2.4 × 3.4 mm: between floor pieces, from the bottom wall into the floor, and from the walls into the floor panels.</p></div>
+    <div class="card"><h3>Part 7 centre seam</h3><h2>Bayonet T-locks</h2>
+      <p>A T-tab (1.6 mm neck, 3.2 mm head) enters a window, then the right half slides 16 mm and the tab runs into its T-slot. The two halves of the floor cannot then be pulled apart.</p></div>
   </section>
 
   <section class="gallery">
-    <figure class="wide"><div class="img"><img src="img/assembled.png" alt="Assembled body, no visible connectors"></div>
-      <figcaption><b>Assembled.</b> Part 7 (blue-grey) on part 6 (cream). No connectors visible inside or out; only the seam lines.</figcaption></figure>
-    <figure class="wide"><div class="img"><img src="img/seam_parts.png" alt="Rail, slot and a slice through the seam"></div>
-      <figcaption><b>One seam.</b> Left: the rail on P6-CL's cut face. Middle: the slot in P6-E's face (and part 6's tongue on the top edge). Right: a slice through the assembled seam from above: the wall is continuous, the dovetail sits inside it.</figcaption></figure>
-    <figure><div class="img"><img src="img/exploded.png" alt="Exploded view"></div>
-      <figcaption><b>Exploded.</b> 14 pieces; the inside faces are plain.</figcaption></figure>
-    <figure><div class="img"><img src="img/tongue_groove.png" alt="Part 6 and part 7 pieces apart"></div>
-      <figcaption><b>Halves apart.</b> P6-BL with its tongue on the top edge, P7-BL above with the groove in its bottom edge.</figcaption></figure>
-    <figure><div class="img"><img src="img/fit_test.png" alt="Fit test"></div>
-      <figcaption><b>Fit test, print first.</b> Dovetails at 0.10 / 0.15 / 0.20 mm and grooves at 0.15 / 0.20 / 0.25 mm (1–3 notches).</figcaption></figure>
-    <figure><div class="img"><img src="img/as_printed.png" alt="Pieces as printed"></div>
-      <figcaption><b>As printed.</b> Upright, as they stand in the suitcase. The E pieces carry the end-wall handles.</figcaption></figure>
+    <figure class="wide"><div class="img"><img src="img/v3_assembled.png" alt="Assembled body"></div>
+      <figcaption><b>Assembled.</b> Part 6 (blue-grey) on part 7 (cream). No joint shows inside or out.</figcaption></figure>
+    <figure><div class="img"><img src="img/v3_exploded.png" alt="Part 6 lifted off part 7"></div>
+      <figcaption><b>Part 6 lifted.</b> The keys along part 7's top edge.</figcaption></figure>
+    <figure><div class="img"><img src="img/v3_stagger_keys.png" alt="Keys either side of a part 7 seam"></div>
+      <figcaption><b>Across a seam.</b> Keys on both part 7 pieces, under one part 6 piece that ties them together.</figcaption></figure>
+    <figure><div class="img"><img src="img/v3_floor_joints.png" alt="Part 7 floor pieces apart"></div>
+      <figcaption><b>Part 7 floor, pulled apart.</b> Floor keys on the seams; the panels sit 0.2 mm clear of the walls.</figcaption></figure>
+    <figure><div class="img"><img src="img/v3_bayonet.png" alt="Bayonet T-lock section"></div>
+      <figcaption><b>Bayonet T-lock</b>, cut through the floor's mid-plane: the tab (red) locked in its T-slot; the window is 16 mm behind it.</figcaption></figure>
+    <figure class="wide"><div class="img"><img src="img/v3_as_printed.png" alt="Pieces as printed"></div>
+      <figcaption><b>As printed.</b> Part 6 upside down (pockets up, far less support), part 7 floor-down, panels flat.</figcaption></figure>
   </section>
 
-  <section style="display:grid;gap:10px">
-    <h2>What I changed from your grid</h2>
-    <div class="three">
-      <div class="card"><h3>Side-wall cuts</h3><p>y −652 and −482. Your middle row was exactly 180.0 mm, the whole plate; the longest piece is now 173 mm.</p></div>
-      <div class="card"><h3>End wall: 3 pieces</h3><p>Your centre cut runs through the end wall's 140 mm handle recess. It is cut either side of it instead (x 12948 and 13124.7): 7 pieces per part.</p></div>
-      <div class="card"><h3>Part 7 on part 6</h3><p>Stacked, which completes the two handle recesses that cross the joint. Both halves print upright.</p></div>
-    </div>
+  <section class="card">
+    <h2>What I changed in your model</h2>
+    <div class="tbl"><table><tbody>
+      <tr><td>Floor seam P7-S1 / P7-F2</td><td>moved 5 mm, y −644.23 → −639.23: the middle floor panels were 180.0 × 156 mm, the whole plate, and too wide to turn. They are now 175 mm.</td></tr>
+      <tr><td>Floor panels</td><td>kept 0.2 mm clear of the walls all round, corners included, so they drop in.</td></tr>
+      <tr><td>Frame lock strips</td><td>joined to the part 6 wall pieces they sit on.</td></tr>
+      <tr><td>Mesh repairs</td><td>gaps in 11 saved display meshes closed; P7-B-L and P6-C-R rebuilt as mirrors of P7-B-R and P6-C-L (as they are in your model).</td></tr>
+    </tbody></table></div>
   </section>
 
   <section class="two">
     <div class="card"><h2>Print</h2><ol>
-      <li><b>Fit test first</b> (<code>fit_test.stl</code>). Adjust <code>CLEAR_RAIL</code> or the groove width if a fit is tight or loose, and rebuild.</li>
-      <li>One piece per plate from <code>exports/STL</code>, already upright and placed.</li>
-      <li>Tree supports under the handle recesses only: P6-BR, P7-BR, P6-E, P7-E.</li>
-      <li>5–8 mm brim on the thin straight pieces; keep elephant-foot compensation on so part 7's groove stays open.</li>
-      <li>0.2 mm layers, 4 walls, PLA or PETG.</li>
+      <li>One piece per plate from <code>exports/v3/STL</code>, already oriented; two strips are turned 45°.</li>
+      <li>Part 6 upside down (P6-B: 14 cm³ of support instead of 510).</li>
+      <li>Tree supports for the handle recesses and wheel housings.</li>
+      <li>Floor panels flat, no supports.</li>
     </ol></div>
     <div class="card"><h2>Assemble</h2><ol>
-      <li>Part 6: stand a piece up and slide the next one down onto its rail. Work round the U.</li>
-      <li>Part 7: lower each piece past its neighbours and onto part 6's tongue.</li>
-      <li>Optional: CA glue or epoxy in the slots and groove makes it permanent.</li>
-    </ol>
-<pre>      end wall:  CL | E | CR
- left wall:  CL             CR  right wall
-             BL             BR  (side handle)
-             AL             AR
-                (open end)</pre>
-      <p style="font-size:13.5px;color:var(--muted)">Each position has a P6 (lower) and a P7 (upper) piece. Engraved labels are off to keep the faces clean; pencil the names on the cut faces.</p>
-    </div>
-  </section>
-
-  <section class="card">
-    <h2>Pieces</h2>
-    <div class="tbl"><table>
-      <thead><tr><th>Piece</th><th>Where</th><th>On the plate (mm)</th><th>Volume (P6 / P7)</th><th>Supports</th></tr></thead>
-      <tbody>
-        <tr><td class="num">AL, AR</td><td>side walls, open end</td><td class="num">4.5 × 138 × 95</td><td class="num">57 / 54 cm³</td><td></td></tr>
-        <tr><td class="num">BL</td><td>left side wall, middle</td><td class="num">4.5 × 173 × 95</td><td class="num">71 / 68 cm³</td><td></td></tr>
-        <tr><td class="num">BR</td><td>right side wall, middle, with the handle</td><td class="num">15.6 × 173 × 95</td><td class="num">76 / 73 cm³</td><td><span class="tag">recess</span></td></tr>
-        <tr><td class="num">CL, CR</td><td>corners</td><td class="num">75 × 152 × 95</td><td class="num">89 / 85 cm³</td><td></td></tr>
-        <tr><td class="num">E</td><td>end wall middle, with the handle</td><td class="num">129 × 129 × 95, turned 45°</td><td class="num">76 / 84 cm³</td><td><span class="tag">recess</span></td></tr>
-      </tbody>
-    </table></div>
+      <li>Each half of part 7: floor panels between the walls, keys into pockets; bottom wall against the floor.</li>
+      <li>Set the right half 16 mm towards the end wall, push the halves together, slide it 16 mm towards the open end.</li>
+      <li>Lower each part 6 piece onto part 7's keys.</li>
+    </ol></div>
   </section>
 
   <div class="callout">
-    <p><b>Checks and limits.</b> Clearances measured on the solids (rail 0.150 mm, tongue 0.200 mm). No two pieces overlap when assembled. All 14 pieces pass the FDM print check; the thinnest wall is 1.05 mm, beside the slots, so slide pieces together gently and in line. The pieces are cut from the display meshes in the .3dm, so corner fillets are slightly faceted; export a fine STL or STEP from Rhino for smoother prints. No strength check was run.</p>
+    <p><b>Checks.</b> Clearances measured on the solids (0.200 mm for every joint); the bayonet passes its push-in and slide with 0.2 mm to spare and catches when pulled. No two pieces overlap. All 20 pieces fit the plate; 19 pass the print check, and P7-C-R has a 0.02 mm sliver from your model at the end-wall recess, which a slicer skips. Part 6 is held down by weight (the keys stop sliding, not lifting). Curves are slightly faceted from the saved display meshes. No strength check was run.</p>
   </div>
-  <p style="color:var(--muted);font-size:13.5px">Files on branch <code>claude/keen-ride-4okiiq</code>, folder <code>suitcase_print/</code>. Rhino: <code>rhino_part6_joints.step</code> and <code>rhino_part7_joints.step</code> land on your parts in place.</p>
+  <p style="color:var(--muted);font-size:13.5px">Branch <code>claude/keen-ride-4okiiq</code>, folder <code>suitcase_print/</code>. Rhino: <code>exports/v3/STEP/rhino_part6_joints.step</code> and <code>rhino_part7_joints.step</code> land on your pieces in place.</p>
 </div>
