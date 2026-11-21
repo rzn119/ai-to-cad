@@ -2,19 +2,19 @@
  "pieces": {
   "P6-B-L": {
    "size_mm": [
-    160.7,
-    42.8,
+    163.7,
+    45.8,
     92.3
    ],
    "turned_on_plate_deg": 0,
-   "volume_cm3": 114.0,
+   "volume_cm3": 114.9,
    "watertight": true,
    "fits_180_plate_with_2mm_margin_each_side": true
   },
   "P6-B-R": {
    "size_mm": [
     160.7,
-    42.8,
+    45.8,
     92.3
    ],
    "turned_on_plate_deg": 0,
@@ -24,12 +24,12 @@
   },
   "P6-C-L": {
    "size_mm": [
-    160.7,
+    163.7,
     160.0,
     92.3
    ],
    "turned_on_plate_deg": 0,
-   "volume_cm3": 176.7,
+   "volume_cm3": 176.6,
    "watertight": true,
    "fits_180_plate_with_2mm_margin_each_side": true
   },
@@ -40,25 +40,25 @@
     92.3
    ],
    "turned_on_plate_deg": 0,
-   "volume_cm3": 176.8,
+   "volume_cm3": 176.0,
    "watertight": true,
    "fits_180_plate_with_2mm_margin_each_side": true
   },
   "P6-S1-L": {
    "size_mm": [
     11.7,
-    117.2,
+    120.2,
     92.3
    ],
    "turned_on_plate_deg": 0,
-   "volume_cm3": 58.7,
+   "volume_cm3": 58.6,
    "watertight": true,
    "fits_180_plate_with_2mm_margin_each_side": true
   },
   "P6-S1-R": {
    "size_mm": [
     11.7,
-    117.2,
+    120.2,
     92.3
    ],
    "turned_on_plate_deg": 0,
@@ -68,23 +68,23 @@
   },
   "P6-S2-L": {
    "size_mm": [
-    130.7,
-    130.7,
+    131.7,
+    132.0,
     92.3
    ],
    "turned_on_plate_deg": 45,
-   "volume_cm3": 87.7,
+   "volume_cm3": 87.6,
    "watertight": true,
    "fits_180_plate_with_2mm_margin_each_side": true
   },
   "P6-S2-R": {
    "size_mm": [
-    130.7,
-    130.7,
+    132.0,
+    131.7,
     92.3
    ],
    "turned_on_plate_deg": 45,
-   "volume_cm3": 92.8,
+   "volume_cm3": 92.7,
    "watertight": true,
    "fits_180_plate_with_2mm_margin_each_side": true
   },
@@ -117,7 +117,7 @@
     96.4
    ],
    "turned_on_plate_deg": 0,
-   "volume_cm3": 122.3,
+   "volume_cm3": 121.9,
    "watertight": true,
    "fits_180_plate_with_2mm_margin_each_side": true
   },
@@ -128,7 +128,7 @@
     96.4
    ],
    "turned_on_plate_deg": 0,
-   "volume_cm3": 122.3,
+   "volume_cm3": 121.9,
    "watertight": true,
    "fits_180_plate_with_2mm_margin_each_side": true
   },
@@ -139,7 +139,7 @@
     5.7
    ],
    "turned_on_plate_deg": 0,
-   "volume_cm3": 155.1,
+   "volume_cm3": 155.3,
    "watertight": true,
    "fits_180_plate_with_2mm_margin_each_side": true
   },
@@ -150,7 +150,7 @@
     5.7
    ],
    "turned_on_plate_deg": 0,
-   "volume_cm3": 154.4,
+   "volume_cm3": 154.6,
    "watertight": true,
    "fits_180_plate_with_2mm_margin_each_side": true
   },
@@ -161,7 +161,7 @@
     5.7
    ],
    "turned_on_plate_deg": 0,
-   "volume_cm3": 121.8,
+   "volume_cm3": 122.0,
    "watertight": true,
    "fits_180_plate_with_2mm_margin_each_side": true
   },
@@ -172,7 +172,7 @@
     5.7
    ],
    "turned_on_plate_deg": 0,
-   "volume_cm3": 121.1,
+   "volume_cm3": 121.2,
    "watertight": true,
    "fits_180_plate_with_2mm_margin_each_side": true
   },
@@ -183,7 +183,7 @@
     96.4
    ],
    "turned_on_plate_deg": 0,
-   "volume_cm3": 181.0,
+   "volume_cm3": 180.9,
    "watertight": true,
    "fits_180_plate_with_2mm_margin_each_side": true
   },
@@ -194,49 +194,37 @@
     96.4
    ],
    "turned_on_plate_deg": 0,
-   "volume_cm3": 180.2,
+   "volume_cm3": 180.1,
    "watertight": true,
    "fits_180_plate_with_2mm_margin_each_side": true
   },
   "P7-S2-L": {
    "size_mm": [
-    130.4,
-    130.4,
+    131.5,
+    131.5,
     96.4
    ],
    "turned_on_plate_deg": 45,
-   "volume_cm3": 74.7,
+   "volume_cm3": 74.5,
    "watertight": true,
    "fits_180_plate_with_2mm_margin_each_side": true
   },
   "P7-S2-R": {
    "size_mm": [
-    130.4,
-    130.4,
+    131.5,
+    131.5,
     96.4
    ],
    "turned_on_plate_deg": 45,
-   "volume_cm3": 79.9,
+   "volume_cm3": 79.7,
    "watertight": true,
    "fits_180_plate_with_2mm_margin_each_side": true
   }
  },
  "overlap_check": {
-  "touching_pairs": 62,
+  "touching_pairs": 60,
   "largest_overlap_mm3": 1.0819,
   "clashes": [
-   [
-    "P6-B-L",
-    "P6-S1-L",
-    0.02,
-    0.0001
-   ],
-   [
-    "P6-B-R",
-    "P6-S1-R",
-    0.02,
-    0.0001
-   ],
    [
     "P7-B-L",
     "P7-B-R",
@@ -254,12 +242,6 @@
     "P7-S1-R",
     0.012,
     0.0
-   ],
-   [
-    "P7-S1-L",
-    "P7-S2-L",
-    0.606,
-    0.0014
    ]
   ]
  }

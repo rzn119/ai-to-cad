@@ -36,3 +36,14 @@ print(f"bayonet path: smallest gap along the push-in and the slide {worst:.3f} m
 assert worst > 0.05, worst
 # and it really locks: pulled 1 mm straight out of the locked position it must hit the slot
 print("pulled out 1 mm when locked -> gap", round(closest_points(blk, bd.Pos(-1.0, 0, 0) * tab0).distance, 3), "(0 = it holds)")
+
+# part 6 sliding dovetail: rail to slot
+r = v.SPEC["rails"][1]
+win = v._rail_solid(r, [(0, -6), (12, -6), (12, 6), (0, 6)], -60, -40)
+gr = closest_points(win - v.rail_slot(r), v.rail(r) & win).distance
+print(f"part 6 dovetail rail to slot: {gr:.3f} mm (want {v.CLEAR})"); assert abs(gr - v.CLEAR) < 0.01, gr
+# part 7 wall-seam tab to pocket
+js = next(j for j in v.SPEC["floor"] if j["kind"] == "seamkey")
+w2 = v._slab(js, 30, 30, 0.0, 20.0)
+gs = closest_points(w2 - v.seam_pocket(js), v.seam_tab(js) & w2).distance
+print(f"part 7 wall-seam tab to pocket: {gs:.3f} mm (want {v.CLEAR})"); assert abs(gs - v.CLEAR) < 0.01, gs

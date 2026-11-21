@@ -55,22 +55,32 @@ code { font-family: var(--font-mono); font-size: 12.5px; background: var(--bg); 
 <div class="wrap">
   <header style="display:grid;gap:8px">
     <h1>Suitcase Body Print Kit</h1>
-    <p class="lede">Your updated parts 6 and 7, split in Rhino into 20 pieces for a Bambu A1 mini, joined by hidden joints with 0.2 mm clearance. Part 6 (the upper ring) sits on part 7 (the tray with the floor). The joints are only where you asked: between part 6's bottom faces and part 7's top faces, and in part 7's floor.</p>
+    <p class="lede">Your updated parts 6 and 7, split in Rhino into 20 pieces for a Bambu A1 mini. Every piece is joined to its neighbours by hidden joints with 0.2 mm clearance: within part 6, within part 7, between part 6's bottom faces and part 7's top faces, and across part 7's floor. Part 6 (the upper ring) sits on part 7 (the tray with the floor).</p>
   </header>
 
   <div class="stats">
     <div class="stat"><b>20</b><span>pieces (8 in part 6, 12 in part 7)</span></div>
+    <div class="stat"><b>8 + 12</b><span>T-rails in part 6, tabs in part 7</span></div>
     <div class="stat"><b>41</b><span>keys, part 7 top → part 6</span></div>
-    <div class="stat"><b>24 + 7</b><span>floor keys + bayonet T-locks</span></div>
+    <div class="stat"><b>16 + 7</b><span>floor keys + bayonet T-locks</span></div>
     <div class="stat"><b>0.2 mm</b><span>clearance everywhere</span></div>
     <div class="stat"><b>0</b><span>loose parts</span></div>
   </div>
 
+  <section class="two">
+    <div class="card"><h3>Within part 6: all 8 seams</h3><h2>Sliding T-rails</h2>
+      <p>A T-rail (1.2 mm neck, 2.0 mm head, 3.0 mm out) runs up one piece's cut face and slides into a T-slot in the next, inside the 4.46 mm wall. The pieces slide together vertically, and pulled apart a seam catches after 0.25 mm.</p></div>
+    <div class="card"><h3>Within part 7: the 6 side-wall seams</h3><h2>Tabs in the cut faces</h2>
+      <p>Two tabs (1.6 × 12 mm, 3 mm out) per seam, in pockets in the next piece. Every joint inside a half of part 7 points along the side wall, so each piece goes on with one push. The centre seam is held by the bayonets.</p></div>
+  </section>
+  <figure class="card" style="padding:0"><div class="img" style="background:var(--surface)"><img src="img/v3_seam_sections.png" alt="Sections through a part 6 and a part 7 seam"></div>
+    <figcaption><b>Cut through two seams from above.</b> Left: part 6's T-rail in its T-slot. Right: a part 7 tab in its pocket. 0.2 mm all round; outside, only the seam line.</figcaption></figure>
+
   <section class="three">
     <div class="card"><h3>Part 7 top → part 6 bottom</h3><h2>Keys and pockets</h2>
-      <p>Keys 12 × 1.6 × 4 mm stand on part 7's top edge and drop into pockets 12.4 × 2.0 × 4.4 mm in part 6's bottom edge. Your seams in the two parts are 18 mm apart, so every part 6 piece bridges a part 7 seam and its keys lock the two pieces below together.</p></div>
+      <p>Keys 10 × 1.6 × 4 mm stand on part 7's top edge and drop into pockets 10.4 × 2.0 × 4.4 mm in part 6's bottom edge. Your seams in the two parts are 18 mm apart, so every part 6 piece bridges a part 7 seam and its keys lock the two pieces below together.</p></div>
     <div class="card"><h3>Part 7 floor</h3><h2>Floor keys</h2>
-      <p>Tabs 12 × 2.0 mm stand 3 mm out of one edge, in the middle of the 5.7 mm floor, into pockets 12.4 × 2.4 × 3.4 mm: between floor pieces, from the bottom wall into the floor, and from the walls into the floor panels.</p></div>
+      <p>Tabs 12 × 2.0 mm stand 3 mm out of one edge, in the middle of the 5.7 mm floor, into pockets 12.4 × 2.4 × 3.4 mm: between floor pieces, from the bottom wall into the floor, and from the end wall into the end panel.</p></div>
     <div class="card"><h3>Part 7 centre seam</h3><h2>Bayonet T-locks</h2>
       <p>A T-tab (1.6 mm neck, 3.2 mm head) enters a window, then the right half slides 16 mm and the tab runs into its T-slot. The two halves of the floor cannot then be pulled apart.</p></div>
   </section>
@@ -108,14 +118,14 @@ code { font-family: var(--font-mono); font-size: 12.5px; background: var(--bg); 
       <li>Floor panels flat, no supports.</li>
     </ol></div>
     <div class="card"><h2>Assemble</h2><ol>
-      <li>Each half of part 7: floor panels between the walls, keys into pockets; bottom wall against the floor.</li>
+      <li>Each half of part 7, every push towards the open end: B, then S1 onto it, F2 onto S1's floor, S2 onto S1, F3 onto F2, C onto S2 and F3.</li>
       <li>Set the right half 16 mm towards the end wall, push the halves together, slide it 16 mm towards the open end.</li>
-      <li>Lower each part 6 piece onto part 7's keys.</li>
+      <li>Lower part 6 onto part 7's keys and down each other's T-rails, in this order: C-R, C-L, S2-L, S2-R, B-L, B-R, S1-L, S1-R.</li>
     </ol></div>
   </section>
 
   <div class="callout">
-    <p><b>Checks.</b> Clearances measured on the solids (0.200 mm for every joint); the bayonet passes its push-in and slide with 0.2 mm to spare and catches when pulled. No two pieces overlap. All 20 pieces fit the plate; 19 pass the print check, and P7-C-R has a 0.02 mm sliver from your model at the end-wall recess, which a slicer skips. Part 6 is held down by weight (the keys stop sliding, not lifting). Curves are slightly faceted from the saved display meshes. No strength check was run.</p>
+    <p><b>Checks.</b> Clearances measured on the solids (0.200 mm for every joint). Every piece, moved along its way in, in the order above, touches nothing. Pulled apart, every piece is held within 0.3 mm. No two pieces overlap. All 20 pieces fit the plate; 19 pass the print check, and P7-C-R has a 0.02 mm sliver from your model at the end-wall recess, which a slicer skips. Fixed from the last version: the part 7 corners had floor keys in two directions and could not have been assembled. Part 6 is held down by weight. Curves are slightly faceted from the saved display meshes. No strength check was run.</p>
   </div>
   <p style="color:var(--muted);font-size:13.5px">Branch <code>claude/keen-ride-4okiiq</code>, folder <code>suitcase_print/</code>. Rhino: <code>exports/v3/STEP/rhino_part6_joints.step</code> and <code>rhino_part7_joints.step</code> land on your pieces in place.</p>
 </div>

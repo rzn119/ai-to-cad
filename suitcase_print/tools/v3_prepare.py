@@ -120,12 +120,15 @@ report["changes"].append("floor seam between P7-S1 and P7-F2 moved from y -644.2
 # neighbouring walls' outline at floor level, grown by 0.2 mm, out of each panel (corners included)
 WALL_CLEAR = 0.2
 for panel, walls in (("P7-F2-L", ["P7-S2-L"]), ("P7-F2-R", ["P7-S2-R"]),
+                     ("P7-S1-L", ["P7-S2-L"]), ("P7-S1-R", ["P7-S2-R"]),      # the 5 mm strip of floor S1 took over
                      ("P7-F3-L", ["P7-C-L", "P7-S2-L"]), ("P7-F3-R", ["P7-C-R", "P7-S2-R"])):
     outline = unary_union([
         unary_union([Polygon(e[:, :2]).buffer(0) for e in pieces[w].section(plane_origin=[0, 0, ZF], plane_normal=[0, 0, 1]).discrete])
         for w in walls]).buffer(WALL_CLEAR, join_style=2)
     for poly in getattr(outline, "geoms", [outline]):
         prism = trimesh.creation.extrude_polygon(poly, 12.0); prism.apply_translation([0, 0, ZF - 6.0])
+        if panel.startswith("P7-S1"):         # only the moved strip of floor, not S1's own wall end
+            prism = boolean("intersection", prism, tbox(13300, 13760, FLOOR_SEAM_OLD + 0.01, FLOOR_SEAM_NEW + 1, -200, -150))
         pieces[panel] = boolean("difference", pieces[panel], prism)
 report["changes"].append("floor panels kept 0.2 mm clear of the walls all round (corners included), so they drop in between the walls")
 def clean(t, name):
@@ -164,8 +167,8 @@ bot6 = {n: trace(t, ZJ + 0.4) for n, t in pieces.items() if n.startswith("P6")}
 fl7 = {n: trace(t, ZF) for n, t in pieces.items() if n.startswith("P7")}
 
 # ---------------- ring keys (part 7 top -> part 6 bottom) ----------------
-KEY_L, KEY_W = 12.0, 1.6
-POCKET_L, POCKET_W = 12.4, 2.0
+KEY_L, KEY_W = 10.0, 1.6
+POCKET_L, POCKET_W = 10.4, 2.0
 MIN_WALL = 1.0                       # material left beside a pocket
 
 
@@ -210,9 +213,10 @@ for cx, cy, along_y in cands:
     pocket = rect(cx, cy, POCKET_L, POCKET_W, along_y)
     o7 = owner(key, top7, 0.6)
     o6 = owner(pocket, bot6, MIN_WALL)
-    # keep at least 2 mm of wall between a pocket's end and a seam (1 mm erosion + 1 mm longer test)
-    long_pocket = rect(cx, cy, POCKET_L + 2.0, POCKET_W, along_y)
-    if o7 and o6 and owner(long_pocket, bot6, MIN_WALL) == o6 and owner(rect(cx, cy, KEY_L + 2.0, KEY_W, along_y), top7, 0.6) == o7:
+    # a pocket stays 4.5 mm from a part 6 seam (the part 6 dovetail fills the wall's middle within
+    # 3.4 mm of it); a key stays 2 mm from a part 7 seam
+    long_pocket = rect(cx, cy, POCKET_L + 7.0, POCKET_W, along_y)
+    if o7 and o6 and owner(long_pocket, bot6, MIN_WALL) == o6 and owner(rect(cx, cy, KEY_L + 2.8, KEY_W, along_y), top7, 0.6) == o7:
         valid.append((cx, cy, along_y, o7, o6))
 # pick: per (part 7 piece, part 6 piece) pair, keys at least 45 mm apart, at least one each
 by_pair = {}
@@ -252,19 +256,40 @@ for side, sgn in (("L", -1), ("R", 1)):
         fkey("key", f"P7-S1-{side}", f"P7-F2-{side}", x, FLOOR_SEAM_NEW, "y", +1)   # S1 floor -> F2
         fkey("key", f"P7-F3-{side}", f"P7-F2-{side}", x, -464.23, "y", -1)          # F3 -> F2
         fkey("wallkey", f"P7-C-{side}", f"P7-F3-{side}", x, -326.69, "y", -1)       # end wall -> F3
-    xin = 13374.08 if side == "L" else 13686.58                                       # side wall inner face
-    s = 1 if side == "L" else -1
-    for y in (-600.0, -505.0):
-        fkey("wallkey", f"P7-S2-{side}", f"P7-F2-{side}", xin, y, "x", s)
-    for y in (-430.0, -370.0):
-        fkey("wallkey", f"P7-C-{side}", f"P7-F3-{side}", xin, y, "x", s)
+    # (no keys from the side walls into the panels: every key in a half of part 7 points along y, so
+    #  each piece goes on with one push along the wall)
 # centre seam: bayonet dovetails, left pieces carry the tab, right pieces the slot
 for lp, rp, ys in (("P7-B-L", "P7-B-R", (-795.0,)), ("P7-S1-L", "P7-S1-R", (-700.0, -660.0)),
                    ("P7-F2-L", "P7-F2-R", (-575.0, -500.0)), ("P7-F3-L", "P7-F3-R", (-410.0, -352.0))):
     for y in ys:
         fkey("bayonet", lp, rp, XC, y, "x", +1)
 
-json.dump({"frame": {"DX": DX, "DZ": DZ, "ZJ": ZJ, "ZF": ZF, "XC": XC}, "ring_keys": ring_keys, "floor": floor,
+# ---------------- part 7 wall seams: tabs in the cut faces, along y ----------------
+WALL_X = {"L": 13371.85, "R": 13688.81}       # wall centre lines
+for side in "LR":
+    for a, b, y in ((f"P7-B-{side}", f"P7-S1-{side}", -779.46), (f"P7-S1-{side}", f"P7-S2-{side}", -644.23),
+                    (f"P7-S2-{side}", f"P7-C-{side}", -464.23)):
+        for z in (-150.0, -112.0):
+            fkey("seamkey", a, b, WALL_X[side], y, "y", +1, z=z)
+
+# ---------------- part 6 seams: sliding dovetails the height of the cut face ----------------
+# open: which end of the slot is open. Side seams: both. End-wall centre: the recess fills the lower
+# wall, so the rail runs z -57 .. top in a slot open at the top (P6-C-R goes in before P6-C-L).
+# Bottom-wall centre: the plate closes the top, so the rail runs bottom .. z 1 in a slot open at the
+# bottom (P6-B-L goes in before P6-B-R).
+Z6 = (ZJ + 0.1, ZJ + 92.32)            # rails start 0.1 mm above the joint (part 7 tops sit at -84.866)
+rails = []
+for side in "LR":
+    for a, b, y, z1 in ((f"P6-B-{side}", f"P6-S1-{side}", -779.46, 1.0), (f"P6-S1-{side}", f"P6-S2-{side}", -662.23, Z6[1]),
+                        (f"P6-S2-{side}", f"P6-C-{side}", -482.23, Z6[1])):
+        # B|S1: the rail stops under B's top plate, so its slot opens at the bottom only (no notch in
+        # S1's top edge; S1 goes on after B). The other side seams run the full height, open both ends.
+        rails.append({"on": a, "into": b, "axis": "y", "s": y, "centre": WALL_X[side], "z0": Z6[0], "z1": z1,
+                      "open": "bottom" if z1 < Z6[1] else "both"})
+rails.append({"on": "P6-C-L", "into": "P6-C-R", "axis": "x", "s": XC, "centre": -324.46, "z0": -57.0, "z1": Z6[1], "open": "top"})
+rails.append({"on": "P6-B-L", "into": "P6-B-R", "axis": "x", "s": XC, "centre": -819.99, "z0": Z6[0], "z1": 1.0, "open": "bottom"})
+
+json.dump({"frame": {"DX": DX, "DZ": DZ, "ZJ": ZJ, "ZF": ZF, "XC": XC}, "ring_keys": ring_keys, "floor": floor, "rails": rails,
            "report": report}, open(f"{OUT}/joints.json", "w"), indent=1)
 print(f"{len(pieces)} pieces; {len(ring_keys)} ring keys over {len(by_pair)} part-6/part-7 pairs; {len(floor)} floor joints")
 for pair in sorted(by_pair):

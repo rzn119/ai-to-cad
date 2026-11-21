@@ -27,7 +27,13 @@ DX, DZ, ZJ, ZF, XC = F["DX"], F["DZ"], F["ZJ"], F["ZF"], F["XC"]
 
 CLEAR = 0.20
 # ring keys
-KEY_L, KEY_W, KEY_H, KEY_EMBED = 12.0, 1.6, 4.0, 0.5
+KEY_L, KEY_W, KEY_H, KEY_EMBED = 10.0, 1.6, 4.0, 0.5
+# part 7 wall-seam tabs (in the cut face, 4.46 mm wall)
+SEAM_W, SEAM_H = 1.6, 12.0
+# part 6 sliding T-rails (in the cut face): 1.2 mm neck for 1.2 mm, then a 2.0 mm head to 3.0 mm out.
+# Square shoulders catch after 0.2 mm of pull (a dovetail that fits a 4.46 mm wall tapers so little
+# that it let the seam open 2.5 mm before gripping).
+RAIL_NECK, RAIL_NECK_D, RAIL_HEAD, RAIL_D, RAIL_END = 1.2, 1.2, 2.0, 3.0, 0.2
 # floor keys
 TAB_L, TAB_H, TAB_D, TAB_EMBED = 12.0, 2.0, 3.0, 0.5
 # bayonet (T-head)
@@ -64,6 +70,45 @@ def _slab(j, length, height, d0, d1):
     if j["axis"] == "y":
         return box(j["x"] - length / 2, j["x"] + length / 2, j["y"] + a, j["y"] + b, z0, z1)
     return box(j["x"] + a, j["x"] + b, j["y"] - length / 2, j["y"] + length / 2, z0, z1)
+
+
+def seam_tab(j):
+    return _slab(j, SEAM_W, SEAM_H, -TAB_EMBED, TAB_D)
+
+
+def seam_pocket(j):
+    return _slab(j, SEAM_W + 2 * CLEAR, SEAM_H + 2 * CLEAR, -0.01, TAB_D + 2 * CLEAR)
+
+
+def _rail_profile(clear, s0, s1):
+    """(s, t): s out from the seam, t across the wall. A T: neck, then head. clear > 0: the slot,
+    every face moved out by `clear`."""
+    n, h = RAIL_NECK / 2 + clear, RAIL_HEAD / 2 + clear
+    sn = RAIL_NECK_D - clear
+    return [(s0, -n), (sn, -n), (sn, -h), (s1, -h), (s1, h), (sn, h), (sn, n), (s0, n)]
+
+
+def _rail_solid(r, profile, z0, z1):
+    """Profile in the plane across the seam: s along the wall away from the seam, t across it."""
+    if r["axis"] == "y":     # side wall: s -> +y, t -> x about the wall centre line
+        plane = bd.Plane(origin=(r["centre"], r["s"], z0), x_dir=(0, 1, 0), z_dir=(0, 0, 1))
+    else:                    # end / bottom wall: s -> +x, t -> y about the wall centre line
+        plane = bd.Plane(origin=(r["s"], r["centre"], z0), x_dir=(1, 0, 0), z_dir=(0, 0, 1))
+    face = plane.location * bd.Polygon(*profile, align=None)
+    return bd.extrude(face, amount=z1 - z0, dir=(0, 0, 1))
+
+
+def rail(r):
+    return _rail_solid(r, _rail_profile(0.0, -TAB_EMBED, RAIL_D), r["z0"], r["z1"])
+
+
+def rail_slot(r):
+    z0, z1 = r["z0"] - CLEAR, r["z1"] + CLEAR
+    if r["open"] in ("both", "bottom"):
+        z0 = ZJ - 2.0                        # through part 6's bottom edge
+    if r["open"] in ("both", "top"):
+        z1 = ZJ + 92.32 + 2.0                # through part 6's top edge
+    return _rail_solid(r, _rail_profile(CLEAR, -0.01, RAIL_D + RAIL_END), z0, z1)
 
 
 def floor_tab(j):
@@ -112,7 +157,7 @@ def piece_names():
     names = set()
     for k in SPEC["ring_keys"]:
         names |= {k["on"], k["into"]}
-    for j in SPEC["floor"]:
+    for j in SPEC["floor"] + SPEC.get("rails", []):
         names |= {j["on"], j["into"]}
     return sorted(names)
 
@@ -124,8 +169,14 @@ def adds_cuts(name):
             adds.append(ring_key(k))
         if k["into"] == name:
             cuts.append(ring_pocket(k))
+    for r in SPEC.get("rails", []):
+        if r["on"] == name:
+            adds.append(rail(r))
+        if r["into"] == name:
+            cuts.append(rail_slot(r))
     for j in SPEC["floor"]:
-        tab, pocket = (bayonet_tab, bayonet_slot) if j["kind"] == "bayonet" else (floor_tab, floor_pocket)
+        tab, pocket = {"bayonet": (bayonet_tab, bayonet_slot), "seamkey": (seam_tab, seam_pocket)}.get(
+            j["kind"], (floor_tab, floor_pocket))
         if j["on"] == name:
             adds.append(tab(j))
         if j["into"] == name:
