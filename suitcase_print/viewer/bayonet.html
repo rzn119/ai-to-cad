@@ -1,0 +1,228 @@
+<title>Bayonet T-Lock</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<style>
+/* Layout: title, then the 3D stage with the step strip under it, then the dimensions beside the steps. */
+:root {
+  --bg: #f2f3f4; --surface: #ffffff; --stage: #e4e7ea; --fg: #1d2125; --muted: #5c646c; --line: #d3d7db;
+  --tab: #c0392b; --tab-soft: #f6e3df; --on: #1d2125; --on-fg: #ffffff;
+  --font-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg: #15181b; --surface: #1d2125; --stage: #262b30; --fg: #e9ecee; --muted: #a2abb3;
+    --line: #343a40; --tab: #e0705e; --tab-soft: #3a221e; --on: #e9ecee; --on-fg: #15181b; color-scheme: dark; }
+}
+:root[data-theme="dark"] { --bg: #15181b; --surface: #1d2125; --stage: #262b30; --fg: #e9ecee; --muted: #a2abb3;
+  --line: #343a40; --tab: #e0705e; --tab-soft: #3a221e; --on: #e9ecee; --on-fg: #15181b; color-scheme: dark; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 15px; line-height: 1.55; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-block: 24px 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 18px; }
+h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(24px, 3.6vw, 34px); margin: 0; letter-spacing: -0.01em; }
+h2 { font-family: var(--font-display); font-weight: 600; font-size: 18px; margin: 0; }
+h3 { font: 600 11.5px var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 0; }
+p { margin: 0; }
+.lede { color: var(--muted); max-width: 72ch; }
+.stage { position: relative; background: var(--stage); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; height: min(62vh, 560px); min-height: 360px; }
+#cv { display: block; width: 100%; height: 100%; touch-action: none; cursor: grab; }
+#cv:active { cursor: grabbing; }
+.toggles { position: absolute; top: 12px; right: 12px; display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.tog { font: 500 13px var(--font-body); padding: 7px 11px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); cursor: pointer; }
+.tog[aria-pressed="true"] { background: var(--on); color: var(--on-fg); border-color: var(--on); }
+.readout { position: absolute; left: 12px; top: 12px; font: 500 12.5px var(--font-mono); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 6px 9px; font-variant-numeric: tabular-nums; }
+.hint { position: absolute; left: 12px; bottom: 10px; font: 12px var(--font-mono); color: var(--muted); pointer-events: none; }
+.fallback { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; padding: 24px; color: var(--muted); }
+.controls { display: grid; gap: 10px; }
+.bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.play { font: 600 14px var(--font-body); padding: 9px 16px; border-radius: 8px; border: 0; background: var(--tab); color: #fff; cursor: pointer; min-width: 92px; }
+#t { flex: 1; min-width: 180px; accent-color: var(--tab); }
+.steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+@media (max-width: 760px) { .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.step { text-align: left; border: 1px solid var(--line); background: var(--surface); color: var(--fg); border-radius: 8px; padding: 10px 12px; cursor: pointer; display: grid; gap: 3px; min-width: 0; font: inherit; }
+.step b { font: 600 14px var(--font-display); }
+.step span { font-size: 13px; color: var(--muted); }
+.step[aria-current="true"] { border-color: var(--tab); background: var(--tab-soft); }
+.step:focus-visible, .tog:focus-visible, .play:focus-visible { outline: 2px solid var(--tab); outline-offset: 2px; }
+.info { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 14px; }
+@media (max-width: 760px) { .info { grid-template-columns: minmax(0, 1fr); } }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: grid; gap: 8px; min-width: 0; }
+.card p { font-size: 14px; }
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+td { padding: 5px 0; border-bottom: 1px solid var(--line); }
+td:last-child { text-align: right; font-family: var(--font-mono); font-variant-numeric: tabular-nums; padding-left: 10px; }
+.key { display: flex; gap: 14px; flex-wrap: wrap; font-size: 13px; color: var(--muted); }
+.key span { display: inline-flex; gap: 6px; align-items: center; }
+.sw { width: 12px; height: 12px; border-radius: 3px; display: inline-block; border: 1px solid var(--line); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header style="display:grid;gap:6px">
+    <h1>Bayonet T-Lock</h1>
+    <p class="lede">How the left and right halves of part 7's floor lock together: one of the seven T-locks on the centre seam, at full size and with the real 0.2 mm clearance. Drag to turn it, scroll to zoom, and step through the assembly.</p>
+  </header>
+
+  <div class="stage">
+    <canvas id="cv" aria-label="3D model of the bayonet T-lock"></canvas>
+    <div class="fallback" id="fallback" hidden>The 3D view couldn't start in this browser.</div>
+    <div class="readout" id="readout">right piece: x +18.0 mm, y +16.0 mm</div>
+    <div class="toggles">
+      <button class="tog" id="see" type="button" aria-pressed="true">See through the right piece</button>
+      <button class="tog" id="cut" type="button" aria-pressed="false">Cut across the tab</button>
+    </div>
+    <div class="hint">drag to orbit · scroll or pinch to zoom · right-drag to pan</div>
+  </div>
+
+  <div class="controls">
+    <div class="bar">
+      <button class="play" id="play" type="button">Play</button>
+      <input id="t" type="range" min="0" max="3" step="0.01" value="0" aria-label="Assembly progress">
+    </div>
+    <div class="steps" id="steps">
+      <button class="step" type="button" data-t="0"><b>Apart</b><span>The left floor carries the red T-tab; the right floor has the T-slot and, 16 mm behind it, a straight window.</span></button>
+      <button class="step" type="button" data-t="1"><b>Push in</b><span>With the window over the tab, push the halves together. The 3.2 mm head passes straight through the 3.6 mm window.</span></button>
+      <button class="step" type="button" data-t="2"><b>Slide 16 mm</b><span>Slide the right half towards the open end. The tab runs along the T-slot into its locked place.</span></button>
+      <button class="step" type="button" data-t="3"><b>Try to pull apart</b><span>The head catches behind the slot's lips after 0.2 mm. The halves cannot separate until slid back.</span></button>
+    </div>
+  </div>
+
+  <div class="info">
+    <div class="card">
+      <h3>Why a T-lock</h3>
+      <p>Part 7's two halves meet on one straight centre line: floor, end wall and bottom wall alike. Plain keys would keep them level but let them pull apart. The T-lock's head hooks behind the lips of the slot, so once slid home the seam is held shut. Everything is inside the 5.7 mm floor; nothing shows above or below.</p>
+      <div class="key"><span><i class="sw" style="background:#efe9dc"></i>Left floor (P7-F2-L)</span><span><i class="sw" style="background:#c0392b"></i>T-tab</span><span><i class="sw" style="background:#8fa3b8"></i>Right floor (P7-F2-R)</span></div>
+    </div>
+    <div class="card">
+      <h3>Sizes</h3>
+      <table><tbody>
+        <tr><td>Floor thickness</td><td>5.69 mm</td></tr>
+        <tr><td>Tab: neck / head height</td><td>1.6 / 3.2 mm</td></tr>
+        <tr><td>Tab: reach / length</td><td>3.0 / 12.0 mm</td></tr>
+        <tr><td>Slot: neck / head height</td><td>2.0 / 3.6 mm</td></tr>
+        <tr><td>Clearance, every face</td><td>0.2 mm</td></tr>
+        <tr><td>Window / slide</td><td>12.4 mm / 16 mm</td></tr>
+        <tr><td>Floor left above and below the slot</td><td>1.05 mm</td></tr>
+      </tbody></table>
+    </div>
+  </div>
+</div>
+
+<script>
+const LEFT_GLB = "Z2xURgIAAAAkEAAAWAgAAEpTT057ImFzc2V0Ijp7InZlcnNpb24iOiIyLjAiLCJnZW5lcmF0b3IiOiJjYWQiLCJleHRyYXMiOnsiY2FkIjp7Im1lc2hlZFdpdGhpbiI6MC4wMSwiYW5nbGUiOjUuMH19fSwic2NlbmUiOjAsInNjZW5lcyI6W3sibmFtZSI6ImxlZnRfcGllY2UiLCJub2RlcyI6WzBdfV0sIm5vZGVzIjpbeyJuYW1lIjoibGVmdF9waWVjZSIsInJvdGF0aW9uIjpbLTAuNzA3MTA2NzgxMTg2NTQ3NiwwLjAsMC4wLDAuNzA3MTA2NzgxMTg2NTQ3Nl0sInNjYWxlIjpbMC4wMDEsMC4wMDEsMC4wMDFdLCJjaGlsZHJlbiI6WzEsMl19LHsibmFtZSI6ImxlZnRfZmxvb3IiLCJtZXNoIjowLCJtYXRyaXgiOlsxLjAsMC4wLDAuMCwwLjAsMC4wLDEuMCwwLjAsMC4wLDAuMCwwLjAsMS4wLDAuMCwtMjguMCwtNDIuMCwtMi44NDQ5OTk5OTk5OTk5OTksMS4wXX0seyJuYW1lIjoidF90YWIiLCJtZXNoIjoxLCJtYXRyaXgiOlsxLjAsMC4wLDAuMCwwLjAsMC4wLDEuMCwwLjAsMC4wLDAuMCwwLjAsMS4wLDAuMCwtMTM1MzAuMzMsNTc1LjAsMTc0LjM5NSwxLjBdfV0sIm1lc2hlcyI6W3sibmFtZSI6ImxlZnRfZmxvb3IiLCJwcmltaXRpdmVzIjpbeyJhdHRyaWJ1dGVzIjp7IlBPU0lUSU9OIjowLCJOT1JNQUwiOjF9LCJpbmRpY2VzIjoyLCJtYXRlcmlhbCI6MH1dfSx7Im5hbWUiOiJ0X3RhYiIsInByaW1pdGl2ZXMiOlt7ImF0dHJpYnV0ZXMiOnsiUE9TSVRJT04iOjMsIk5PUk1BTCI6NH0sImluZGljZXMiOjUsIm1hdGVyaWFsIjoxfV19XSwibWF0ZXJpYWxzIjpbeyJwYnJNZXRhbGxpY1JvdWdobmVzcyI6eyJiYXNlQ29sb3JGYWN0b3IiOlswLjg2MzE1NywwLjgxNDg0NywwLjcxNTY5NCwxLjBdLCJtZXRhbGxpY0ZhY3RvciI6MC4wLCJyb3VnaG5lc3NGYWN0b3IiOjAuNn0sImRvdWJsZVNpZGVkIjpmYWxzZSwiYWxwaGFNb2RlIjoiT1BBUVVFIn0seyJwYnJNZXRhbGxpY1JvdWdobmVzcyI6eyJiYXNlQ29sb3JGYWN0b3IiOlswLjUyNzExNSwwLjA0MDkxNSwwLjAyNDE1OCwxLjBdLCJtZXRhbGxpY0ZhY3RvciI6MC4wLCJyb3VnaG5lc3NGYWN0b3IiOjAuNn0sImRvdWJsZVNpZGVkIjpmYWxzZSwiYWxwaGFNb2RlIjoiT1BBUVVFIn1dLCJhY2Nlc3NvcnMiOlt7ImJ1ZmZlclZpZXciOjAsImNvbXBvbmVudFR5cGUiOjUxMjYsImNvdW50IjoyNCwidHlwZSI6IlZFQzMiLCJtaW4iOlswLjAsMC4wLDAuMF0sIm1heCI6WzI4LjAsNjAuMCw1LjY5MDAwMDA1NzIyMDQ1OV19LHsiYnVmZmVyVmlldyI6MSwiY29tcG9uZW50VHlwZSI6NTEyNiwiY291bnQiOjI0LCJ0eXBlIjoiVkVDMyIsIm1pbiI6Wy0xLjAsLTEuMCwtMS4wXSwibWF4IjpbMS4wLDEuMCwxLjBdfSx7ImJ1ZmZlclZpZXciOjIsImNvbXBvbmVudFR5cGUiOjUxMjMsImNvdW50IjozNiwidHlwZSI6IlNDQUxBUiJ9LHsiYnVmZmVyVmlldyI6MywiY29tcG9uZW50VHlwZSI6NTEyNiwiY291bnQiOjQ4LCJ0eXBlIjoiVkVDMyIsIm1pbiI6WzEzNTI5LjgzMDA3ODEyNSwtNTgxLjAsLTE3NS45OTQ5OTUxMTcxODc1XSwibWF4IjpbMTM1MzMuMzMwMDc4MTI1LC01NjkuMCwtMTcyLjc5NDk5ODE2ODk0NTNdfSx7ImJ1ZmZlclZpZXciOjQsImNvbXBvbmVudFR5cGUiOjUxMjYsImNvdW50Ijo0OCwidHlwZSI6IlZFQzMiLCJtaW4iOlstMS4wLC0xLjAsLTEuMF0sIm1heCI6WzEuMCwxLjAsMS4wXX0seyJidWZmZXJWaWV3Ijo1LCJjb21wb25lbnRUeXBlIjo1MTIzLCJjb3VudCI6ODQsInR5cGUiOiJTQ0FMQVIifV0sImJ1ZmZlclZpZXdzIjpbeyJidWZmZXIiOjAsImJ5dGVPZmZzZXQiOjAsImJ5dGVMZW5ndGgiOjI4OCwidGFyZ2V0IjozNDk2Mn0seyJidWZmZXIiOjAsImJ5dGVPZmZzZXQiOjI4OCwiYnl0ZUxlbmd0aCI6Mjg4LCJ0YXJnZXQiOjM0OTYyfSx7ImJ1ZmZlciI6MCwiYnl0ZU9mZnNldCI6NTc2LCJieXRlTGVuZ3RoIjo3MiwidGFyZ2V0IjozNDk2M30seyJidWZmZXIiOjAsImJ5dGVPZmZzZXQiOjY0OCwiYnl0ZUxlbmd0aCI6NTc2LCJ0YXJnZXQiOjM0OTYyfSx7ImJ1ZmZlciI6MCwiYnl0ZU9mZnNldCI6MTIyNCwiYnl0ZUxlbmd0aCI6NTc2LCJ0YXJnZXQiOjM0OTYyfSx7ImJ1ZmZlciI6MCwiYnl0ZU9mZnNldCI6MTgwMCwiYnl0ZUxlbmd0aCI6MTY4LCJ0YXJnZXQiOjM0OTYzfV0sImJ1ZmZlcnMiOlt7ImJ5dGVMZW5ndGgiOjE5Njh9XX0gICCwBwAAQklOAAAAAAAAAAAAAAAAAAAAAAAAAAAAexS2QAAAAAAAAHBCAAAAAAAAAAAAAHBCexS2QAAA4EEAAAAAAAAAAAAA4EEAAAAAexS2QAAA4EEAAHBCAAAAAAAA4EEAAHBCexS2QAAAAAAAAAAAAAAAAAAA4EEAAAAAAAAAAAAAAAAAAAAAexS2QAAA4EEAAAAAexS2QAAAAAAAAHBCAAAAAAAA4EEAAHBCAAAAAAAAAAAAAHBCexS2QAAA4EEAAHBCexS2QAAAAAAAAAAAAAAAAAAAAAAAAHBCAAAAAAAA4EEAAAAAAAAAAAAA4EEAAHBCAAAAAAAAAAAAAAAAexS2QAAAAAAAAHBCexS2QAAA4EEAAAAAexS2QAAA4EEAAHBCexS2QAAAgL8AAACAAAAAgAAAgL8AAACAAAAAgAAAgL8AAACAAAAAgAAAgL8AAACAAAAAgAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAAIAAAIC/AAAAgAAAAIAAAIC/AAAAgAAAAIAAAIC/AAAAgAAAAIAAAIC/AAAAgAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAIAAAACAAACAvwAAAIAAAACAAACAvwAAAIAAAACAAACAvwAAAIAAAACAAACAvwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwEAAgAAAAEAAwACAAUABAAGAAUABgAHAAsACAAJAAsACgAIAA8ADQAMAA8ADAAOABMAEAARABMAEgAQABcAFQAUABcAFAAWAFJnU0YAQBHE7DEvw1JnU0YAQA7E7DEvw1JvU0YAQA7E7DEvw1JvU0YAQBHE7DEvw1JvU0YAQBHE7DEvw1JvU0YAQA7E7DEvw1JvU0YAQA7EuP4vw1JvU0YAQBHEuP4vw1JvU0YAQBHEuP4vw1JvU0YAQA7EuP4vw1J1U0YAQA7EuP4vw1J1U0YAQBHEuP4vw1J1U0YAQBHEuP4vw1J1U0YAQA7EuP4vw1J1U0YAQA7Ehcssw1J1U0YAQBHEhcssw1J1U0YAQBHEhcssw1J1U0YAQA7Ehcssw1JvU0YAQA7Ehcssw1JvU0YAQBHEhcssw1JvU0YAQBHEhcssw1JvU0YAQA7Ehcssw1JvU0YAQA7EUpgtw1JvU0YAQBHEUpgtw1JvU0YAQBHEUpgtw1JvU0YAQA7EUpgtw1JnU0YAQA7EUpgtw1JnU0YAQBHEUpgtw1JnU0YAQBHEUpgtw1JnU0YAQA7EUpgtw1JnU0YAQA7E7DEvw1JnU0YAQBHE7DEvw1JnU0YAQBHE7DEvw1JvU0YAQBHE7DEvw1JvU0YAQBHEuP4vw1J1U0YAQBHEuP4vw1J1U0YAQBHEhcssw1JvU0YAQBHEhcssw1JvU0YAQBHEUpgtw1JnU0YAQBHEUpgtw1JnU0YAQA7E7DEvw1JvU0YAQA7E7DEvw1JvU0YAQA7EuP4vw1J1U0YAQA7EuP4vw1J1U0YAQA7Ehcssw1JvU0YAQA7Ehcssw1JvU0YAQA7EUpgtw1JnU0YAQA7EUpgtwwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAgD8AAAAAAAAAgAAAgD8AAAAAAAAAgAAAgD8AAAAAAAAAgAAAgD8AAAAAAAAAgAAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAIAAAIA/AAAAgAAAAIAAAIA/AAAAgAAAAIAAAIA/AAAAgAAAAIAAAIA/AAAAgAAAAIAAAIA/AAAAgAAAAIAAAIA/AAAAgAAAAIAAAIA/AAAAgAAAAIAAAIA/AAAAgAMAAAABAAMAAQACAAcABAAFAAcABQAGAAgACQAKAAsACAAKAAwADQAOAA8ADAAOABAAEQASABMAEAASABcAFAAVABcAFQAWABsAGAAZABsAGQAaAB8AHAAdAB8AHQAeACYAJAAlACEAIwAkACEAJAAmACIAIwAhACAAJgAnACAAIQAmAC4ALQAsACkALAArACkALgAsACoAKQArACgALwAuACgALgApAA==";
+const RIGHT_GLB = "Z2xURgIAAAA4DgAABAUAAEpTT057ImFzc2V0Ijp7InZlcnNpb24iOiIyLjAiLCJnZW5lcmF0b3IiOiJjYWQiLCJleHRyYXMiOnsiY2FkIjp7Im1lc2hlZFdpdGhpbiI6MC4wMSwiYW5nbGUiOjUuMH19fSwic2NlbmUiOjAsInNjZW5lcyI6W3sibmFtZSI6InJpZ2h0X3BpZWNlIiwibm9kZXMiOlswXX1dLCJub2RlcyI6W3sibmFtZSI6InJpZ2h0X3BpZWNlIiwicm90YXRpb24iOlstMC43MDcxMDY3ODExODY1NDc2LDAuMCwwLjAsMC43MDcxMDY3ODExODY1NDc2XSwic2NhbGUiOlswLjAwMSwwLjAwMSwwLjAwMV0sImNoaWxkcmVuIjpbMV19LHsibmFtZSI6InJpZ2h0X2Zsb29yIiwibWVzaCI6MCwibWF0cml4IjpbMS4wLDAuMCwwLjAsMC4wLDAuMCwxLjAsMC4wLDAuMCwwLjAsMC4wLDEuMCwwLjAsLTEzNTMwLjMzLDU3NS4wLDE3NC4zOTUsMS4wXX1dLCJtZXNoZXMiOlt7Im5hbWUiOiJyaWdodF9mbG9vciIsInByaW1pdGl2ZXMiOlt7ImF0dHJpYnV0ZXMiOnsiUE9TSVRJT04iOjAsIk5PUk1BTCI6MX0sImluZGljZXMiOjIsIm1hdGVyaWFsIjowfV19XSwibWF0ZXJpYWxzIjpbeyJwYnJNZXRhbGxpY1JvdWdobmVzcyI6eyJiYXNlQ29sb3JGYWN0b3IiOlswLjI3NDY3NywwLjM2NjI1MywwLjQ3OTMyLDEuMF0sIm1ldGFsbGljRmFjdG9yIjowLjAsInJvdWdobmVzc0ZhY3RvciI6MC42fSwiZG91YmxlU2lkZWQiOmZhbHNlLCJhbHBoYU1vZGUiOiJPUEFRVUUifV0sImFjY2Vzc29ycyI6W3siYnVmZmVyVmlldyI6MCwiY29tcG9uZW50VHlwZSI6NTEyNiwiY291bnQiOjg0LCJ0eXBlIjoiVkVDMyIsIm1pbiI6WzEzNTMwLjMzMDA3ODEyNSwtNjE3LjAsLTE3Ny4yNDAwMDU0OTMxNjQwNl0sIm1heCI6WzEzNTU4LjMzMDA3ODEyNSwtNTU3LjAsLTE3MS41NTAwMDMwNTE3NTc4XX0seyJidWZmZXJWaWV3IjoxLCJjb21wb25lbnRUeXBlIjo1MTI2LCJjb3VudCI6ODQsInR5cGUiOiJWRUMzIiwibWluIjpbLTEuMCwtMS4wLC0xLjBdLCJtYXgiOlsxLjAsMS4wLDEuMF19LHsiYnVmZmVyVmlldyI6MiwiY29tcG9uZW50VHlwZSI6NTEyMywiY291bnQiOjE1NiwidHlwZSI6IlNDQUxBUiJ9XSwiYnVmZmVyVmlld3MiOlt7ImJ1ZmZlciI6MCwiYnl0ZU9mZnNldCI6MCwiYnl0ZUxlbmd0aCI6MTAwOCwidGFyZ2V0IjozNDk2Mn0seyJidWZmZXIiOjAsImJ5dGVPZmZzZXQiOjEwMDgsImJ5dGVMZW5ndGgiOjEwMDgsInRhcmdldCI6MzQ5NjJ9LHsiYnVmZmVyIjowLCJieXRlT2Zmc2V0IjoyMDE2LCJieXRlTGVuZ3RoIjozMTIsInRhcmdldCI6MzQ5NjN9XSwiYnVmZmVycyI6W3siYnl0ZUxlbmd0aCI6MjMyOH1dfSAYCQAAQklOAFJpU0YAQBrEcT0xw1JpU0YAQBrEzYwrw1JpU0YAQAvEcT0xw1JpU0YAQAvEzYwrw1JpU0bNTBXEUpgsw1JpU0bNTBXE7DEww1JpU0YzMxLEUpgsw1JpU0YzMxLEH2Utw1JpU0YzMw7EH2Utw1JpU0YzMw7EH2Uvw1JpU0YzMxLEH2Uvw1JpU0YzMxLE7DEww1JpU0YAQBrEcT0xw1LZU0YAQBrEcT0xw1JpU0YAQBrEzYwrw1LZU0YAQBrEzYwrw1JpU0YAQBrEzYwrw1JpU0YAQAvEzYwrw1LZU0YAQBrEzYwrw1LZU0YAQAvEzYwrw1JpU0YAQBrEcT0xw1JpU0YAQAvEcT0xw1LZU0YAQBrEcT0xw1LZU0YAQAvEcT0xw1JpU0YAQAvEcT0xw1LZU0YAQAvEcT0xw1JpU0YAQAvEzYwrw1LZU0YAQAvEzYwrw1JpU0bNTBXE7DEwwx92U0bNTBXE7DEwwx92U0bNTBXEUpgsw1JpU0bNTBXEUpgsw1JpU0bNTBXE7DEwwx92U0bNTBXE7DEww1JpU0YzMxLE7DEww4VuU0YzMxLE7DEww4VuU0YzMw7E7DEwwx92U0YzMw7E7DEww1JpU0YzMxLE7DEww4VuU0YzMxLE7DEww1JpU0YzMxLEH2Uvw4VuU0YzMxLEH2Uvw1JpU0YzMxLEH2Uvw4VuU0YzMxLEH2Uvw1JpU0YzMw7EH2Uvw4VuU0YzMw7EH2Uvw1JpU0YzMw7EH2Utw1JpU0YzMw7EH2Uvw4VuU0YzMw7EH2Uvw4VuU0YzMw7E7DEwwx92U0YzMw7E7DEwwx92U0YzMw7EUpgsw4VuU0YzMw7EUpgsw4VuU0YzMw7EH2Utw4VuU0YzMxLEH2Utw1JpU0YzMxLEH2Utw4VuU0YzMw7EH2Utw1JpU0YzMw7EH2Utw4VuU0YzMxLEUpgsw4VuU0YzMxLEH2Utw1JpU0YzMxLEH2Utw1JpU0YzMxLEUpgswx92U0bNTBXEUpgsw1JpU0bNTBXEUpgswx92U0YzMw7EUpgsw4VuU0YzMw7EUpgsw4VuU0YzMxLEUpgsw1JpU0YzMxLEUpgsw1LZU0YAQBrEcT0xw1LZU0YAQBrEzYwrw1LZU0YAQAvEcT0xw1LZU0YAQAvEzYwrwx92U0bNTBXE7DEwwx92U0bNTBXEUpgswx92U0YzMw7E7DEwwx92U0YzMw7EUpgsw4VuU0YzMxLEH2Uvw4VuU0YzMxLE7DEww4VuU0YzMw7EH2Uvw4VuU0YzMw7E7DEww4VuU0YzMxLEUpgsw4VuU0YzMxLEH2Utw4VuU0YzMw7EUpgsw4VuU0YzMw7EH2UtwwAAgL8AAACAAAAAAAAAgL8AAACAAAAAAAAAgL8AAACAAAAAAAAAgL8AAACAAAAAAAAAgL8AAACAAAAAAAAAgL8AAACAAAAAAAAAgL8AAACAAAAAAAAAgL8AAACAAAAAAAAAgL8AAACAAAAAAAAAgL8AAACAAAAAAAAAgL8AAACAAAAAAAAAgL8AAACAAAAAAAAAAIAAAIC/AAAAgAAAAIAAAIC/AAAAgAAAAIAAAIC/AAAAgAAAAIAAAIC/AAAAgAAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAIAAAACAAACAvwAAAIAAAACAAACAvwAAAIAAAACAAACAvwAAAIAAAACAAACAvwAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAgAAAAAAAAIA/AAAAgAAAAAAAAIA/AAAAgAAAAAAAAIA/AAAAgAAAAIAAAACAAACAPwAAAIAAAACAAACAPwAAAIAAAACAAACAPwAAAIAAAACAAACAPwAAAIAAAACAAACAPwAAAIAAAACAAACAPwAAAIAAAIC/AAAAgAAAAIAAAIC/AAAAgAAAAIAAAIC/AAAAgAAAAIAAAIC/AAAAgAAAAIAAAACAAACAPwAAAIAAAACAAACAPwAAAIAAAACAAACAPwAAAIAAAACAAACAPwAAAIAAAIC/AAAAgAAAAIAAAIC/AAAAgAAAAIAAAIC/AAAAgAAAAIAAAIC/AAAAgAAAAIAAAIC/AAAAgAAAAIAAAIC/AAAAgAAAAIAAAIC/AAAAgAAAAIAAAIC/AAAAgAAAAIAAAACAAACAvwAAAIAAAACAAACAvwAAAIAAAACAAACAvwAAAIAAAACAAACAvwAAAIAAAIC/AAAAgAAAAIAAAIC/AAAAgAAAAIAAAIC/AAAAgAAAAIAAAIC/AAAAgAAAAIAAAACAAACAvwAAAIAAAACAAACAvwAAAIAAAACAAACAvwAAAIAAAACAAACAvwAAAIAAAACAAACAvwAAAIAAAACAAACAvwAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgL8AAACAAAAAAAAAgL8AAACAAAAAAAAAgL8AAACAAAAAAAAAgL8AAACAAAAAAAAAgD8AAACAAAAAgAAAgD8AAACAAAAAgAAAgD8AAACAAAAAgAAAgD8AAACAAAAAgAAAgD8AAACAAAAAgAAAgD8AAACAAAAAgAAAgD8AAACAAAAAgAAAgD8AAACAAAAAgAgAAwACAAgAAgAJAAoACQALAAYACAAHAAEABAAFAAEABQAAAAAACwACAAsACQACAAAABQALAAMABAABAAMABgAEAAMACAAGAA8ADAANAA8ADgAMABMAEQAQABMAEAASABcAFAAVABcAFgAUABsAGQAYABsAGAAaABwAHgAdABwAHwAeACMAJQAkACAAIwAiACEAIwAgACUAIwAhACkAJgAnACkAKAAmACsALAAqACsALQAsADUAMwA0ADAAMgAzADAANQAuADAAMwA1ADEAMgAwAC8AMAAuADcAOAA2ADcAOQA4ADoAPAA7ADoAPQA8AEIAQQBAAD8AQwBCAD8AQgA+AD4AQgBAAEUARABGAEUARgBHAEkASgBIAEkASwBKAE0ATgBMAE0ATwBOAFEAUgBQAFEAUwBSAA==";
+
+// right piece offset (mm, model axes: x across the seam, y along it) at each step 0..3
+const KEYS = [[18, 16], [0, 16], [0, 0], [0.2, 0]];
+const READOUTS = ["apart", "window over the tab", "locked", "pulled 0.2 mm: the head is caught"];
+
+const canvas = document.getElementById("cv");
+const tIn = document.getElementById("t");
+const readout = document.getElementById("readout");
+const steps = [...document.querySelectorAll(".step")];
+let viewer = null, playing = false, last = 0;
+
+function offsetAt(t) {
+  const i = Math.min(Math.floor(t), 2), f = t - i;
+  const a = KEYS[i], b = KEYS[i + 1];
+  const e = f < 0.5 ? 2 * f * f : 1 - Math.pow(-2 * f + 2, 2) / 2;           // ease in-out
+  return [a[0] + (b[0] - a[0]) * e, a[1] + (b[1] - a[1]) * e];
+}
+
+function update(t) {
+  const [dx, dy] = offsetAt(t);
+  if (viewer) viewer.place(dx, dy);
+  const near = Math.round(t);
+  const label = Math.abs(t - near) < 0.02 ? READOUTS[near] : "moving";
+  readout.textContent = `right piece: x ${dx >= 0 ? "+" : ""}${dx.toFixed(1)} mm, y ${dy >= 0 ? "+" : ""}${dy.toFixed(1)} mm · ${label}`;
+  steps.forEach((s, k) => s.setAttribute("aria-current", String(Math.round(t) === k)));
+}
+
+function b64(s) { const bin = atob(s); const u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return u.buffer; }
+
+function start() {
+  if (!window.THREE || !THREE.GLTFLoader || !THREE.OrbitControls) { document.getElementById("fallback").hidden = false; return; }
+  let renderer;
+  try { renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true }); }
+  catch (e) { document.getElementById("fallback").hidden = false; return; }
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.localClippingEnabled = true;
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(30, 1, 0.0005, 5);
+  const controls = new THREE.OrbitControls(camera, canvas); controls.enableDamping = true;
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x7d848c, 0.9));
+  const sun = new THREE.DirectionalLight(0xffffff, 0.75); sun.position.set(0.4, 1, 0.6); scene.add(sun);
+  const rim = new THREE.DirectionalLight(0xffffff, 0.35); rim.position.set(-0.8, 0.3, -0.6); scene.add(rim);
+  // cut across the tab: model plane y = 0 is three.js z = 0; keep the side towards +y in the model (z <= 0 here)
+  const cutPlane = new THREE.Plane(new THREE.Vector3(0, 0, -1), 0);
+  const loader = new THREE.GLTFLoader();
+  const right = new THREE.Group(); scene.add(right);
+  const rightMats = [], allMats = [];
+  let loaded = 0;
+  function prep(root, isRight) {
+    root.traverse(o => {
+      if (!o.isMesh) return;
+      o.material = o.material.clone();
+      o.material.side = THREE.DoubleSide;
+      allMats.push(o.material);
+      if (isRight) rightMats.push(o.material);
+    });
+  }
+  function done() {
+    if (++loaded < 2) return;
+    const box = new THREE.Box3().setFromObject(scene);
+    const c = box.getCenter(new THREE.Vector3()), size = box.getSize(new THREE.Vector3()).length();
+    controls.target.copy(c);
+    camera.position.copy(c).add(new THREE.Vector3(0.55, 0.75, 0.9).normalize().multiplyScalar(size * 1.25));
+    camera.near = size / 200; camera.far = size * 40; camera.updateProjectionMatrix();
+    setSee(true); update(+tIn.value);
+  }
+  loader.parse(b64(LEFT_GLB), "", g => { prep(g.scene, false); scene.add(g.scene); done(); });
+  loader.parse(b64(RIGHT_GLB), "", g => { prep(g.scene, true); right.add(g.scene); done(); });
+
+  function setSee(on) {
+    rightMats.forEach(m => { m.transparent = on; m.opacity = on ? 0.32 : 1; m.depthWrite = !on; m.needsUpdate = true; });
+  }
+  function setCut(on) {
+    allMats.forEach(m => { m.clippingPlanes = on ? [cutPlane] : []; m.needsUpdate = true; });
+  }
+  document.getElementById("see").addEventListener("click", e => {
+    const on = e.currentTarget.getAttribute("aria-pressed") !== "true";
+    e.currentTarget.setAttribute("aria-pressed", String(on)); setSee(on);
+  });
+  document.getElementById("cut").addEventListener("click", e => {
+    const on = e.currentTarget.getAttribute("aria-pressed") !== "true";
+    e.currentTarget.setAttribute("aria-pressed", String(on)); setCut(on);
+  });
+  function resize() {
+    const w = canvas.clientWidth, h = canvas.clientHeight, pr = renderer.getPixelRatio();
+    if (canvas.width !== Math.round(w * pr) || canvas.height !== Math.round(h * pr)) { renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); }
+  }
+  (function frame(now) {
+    resize();
+    if (playing) {
+      const dt = Math.min(0.05, (now - last) / 1000); last = now;
+      let t = +tIn.value + dt * 0.55;
+      if (t >= 3) { t = 3; playing = false; document.getElementById("play").textContent = "Replay"; }
+      tIn.value = t; update(t);
+    } else { last = now; }
+    controls.update(); renderer.render(scene, camera); requestAnimationFrame(frame);
+  })(performance.now());
+  // model mm -> three.js: x stays x, model y becomes -z (and the model is in metres)
+  return { place(dx, dy) { right.position.set(dx / 1000, 0, -dy / 1000); } };
+}
+
+viewer = start();
+tIn.addEventListener("input", () => { playing = false; document.getElementById("play").textContent = "Play"; update(+tIn.value); });
+document.getElementById("play").addEventListener("click", e => {
+  if (+tIn.value >= 3) tIn.value = 0;
+  playing = !playing; e.currentTarget.textContent = playing ? "Pause" : "Play";
+});
+steps.forEach(s => s.addEventListener("click", () => { playing = false; document.getElementById("play").textContent = "Play"; tIn.value = s.dataset.t; update(+s.dataset.t); }));
+update(0);
+</script>
