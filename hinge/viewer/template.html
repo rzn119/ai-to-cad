@@ -7,15 +7,18 @@
 <style>
 /* Layout: one column workbench sheet; viewer + controls up top, option cards, then section drawing and the numbers. */
 :root{
+  --spring:#d9822b;
   --bg:#f3f5f7; --panel:#ffffff; --ink:#1d2731; --muted:#5b6876; --line:#d6dde4;
   --accent:#2f6fb3; --accent-soft:#e3edf8; --ok:#2e7d4f; --warn:#a4561b;
   --stage:#e9edf1;
   --display:"Archivo","Helvetica Neue",Arial,sans-serif; --body:"IBM Plex Sans",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --spring:#e8964a;
   --bg:#141a20; --panel:#1c242c; --ink:#e4e9ee; --muted:#9aa7b4; --line:#2e3a45;
   --accent:#6ea8e6; --accent-soft:#1f3347; --ok:#6cc28f; --warn:#e3a06a; --stage:#1a2129; color-scheme:dark}}
 :root[data-theme="dark"]{
+  --spring:#e8964a;
   --bg:#141a20; --panel:#1c242c; --ink:#e4e9ee; --muted:#9aa7b4; --line:#2e3a45;
   --accent:#6ea8e6; --accent-soft:#1f3347; --ok:#6cc28f; --warn:#e3a06a; --stage:#1a2129; color-scheme:dark}
 body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55}
@@ -70,7 +73,7 @@ ul{margin:0;padding-left:1.2em;display:grid;gap:4px}
 <header>
   <span class="eyebrow">hinge.3dm · cone-pivot hinge · 0–180°</span>
   <h1>Three ways to make the hinge hold an angle</h1>
-  <p class="lede">Each option is built on your hinge as it is in the .3dm: the same box, knuckle, arm and end piece, and the same pivot axis. Pick an option and move the arm. Turn on "Cut in half" to see the parts inside the channel.</p>
+  <p class="lede">Each option is built on your hinge as it is in the .3dm: the same box, knuckle, arm and end piece, and the same pivot axis. Pick an option and move the arm. Turn on "Cut in half" to see the spring (orange) bend as the knuckle turns.</p>
 </header>
 
 <section class="bench" aria-label="3D viewer">
@@ -93,6 +96,7 @@ ul{margin:0;padding-left:1.2em;display:grid;gap:4px}
     </div>
     <p id="status"></p>
     <p class="desc" id="desc"></p>
+    <p class="note" id="legend" hidden><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--spring);vertical-align:middle"></span> spring, shown bending: <output id="give">0.00</output> mm</p>
   </div>
 </section>
 
@@ -136,6 +140,8 @@ ul{margin:0;padding-left:1.2em;display:grid;gap:4px}
 
 <script>
 const GLB = __GLBS__;
+const GIVE = __GIVE__;   // spring give (mm) at the tooth, every 0.25 deg from -2 deg
+const SPAN = __SPAN__;   // spring span along the hinge, measured from the pivot (mm)
 const INFO = {
   original:{steps:"loose: no stops", desc:"Your hinge: cone bosses on the walls run in cone sockets in the knuckle. It swings freely."},
   A:{steps:"stops every 15°", snap:15, desc:"Let go and the arm settles in the nearest notch. Moving it means pushing the nub down 0.57 mm."},
@@ -147,9 +153,39 @@ const $ = id => document.getElementById(id);
 const slider = $("slider"), act = $("act"), st = $("status");
 
 function say(t, cls){ st.textContent = t; st.className = cls || ""; }
+function give(o, a){
+  const g = GIVE[o]; if (!g) return 0;
+  const i = Math.max(0, Math.min(g.length - 1, Math.round((a + 2) / 0.25)));
+  return g[i];
+}
+// bend the spring: A is a bridge fixed at both ends, B a pawl fixed at the back (the tooth sits
+// at the pivot, s = 0 along the span; s grows towards the open end of the box)
+function bend(){
+  const o = opt; if (!cur || !cur.spring) return;
+  const pressed = o === "B" && act.getAttribute("aria-pressed") === "true";
+  let d = give(o, angle); if (pressed) d = Math.max(d, 1.15);
+  const [s0, s1] = SPAN[o], L = s1 - s0, a = -s0;          // a: root (or left end) to the tooth
+  const pos = cur.spring.geometry.attributes.position, base = cur.springBase;
+  let shape;
+  if (o === "A") {
+    const f = x => { const u = x / L; return u * u * (1 - u) * (1 - u); };
+    const fa = f(a); shape = x => f(x) / fa;
+  } else if (pressed) {                                        // finger on the free end
+    const f = x => x * x * (3 * L - x); const fa = f(a); shape = x => f(x) / fa;
+  } else {                                                     // the knuckle pushing on the tooth
+    const f = x => x <= a ? x * x * (3 * a - x) : a * a * (3 * x - a); const fa = f(a); shape = x => f(x) / fa;
+  }
+  for (let i = 0; i < pos.count; i++) {
+    const x = Math.max(0, Math.min(L, -base[3 * i + 2] - s0));   // three z = -(file y - pivot y)
+    pos.setY(i, base[3 * i + 1] - d * shape(x));
+  }
+  pos.needsUpdate = true;
+  $("give").textContent = d.toFixed(2);
+}
 function setAngle(a){
   angle = a; slider.value = a; $("ang").textContent = (Math.round(a*10)/10) + "°";
   if (cur) cur.moving.rotation.x = a * Math.PI / 180;
+  bend();
 }
 function choose(o){
   opt = o;
@@ -157,6 +193,7 @@ function choose(o){
   $("steps").textContent = INFO[o].steps; $("desc").textContent = INFO[o].desc;
   act.hidden = !(o === "B" || o === "C"); act.setAttribute("aria-pressed", "false");
   act.textContent = o === "B" ? "Press pawl" : "Tighten knob";
+  $("legend").hidden = !(o === "A" || o === "B");
   slider.disabled = false; say("");
   if (scene) show(o);
   setAngle(o === "B" ? 0 : angle - (INFO[o].snap ? angle % INFO[o].snap : 0));
@@ -177,7 +214,11 @@ slider.addEventListener("change", () => {
 act.addEventListener("click", () => {
   const on = act.getAttribute("aria-pressed") !== "true"; act.setAttribute("aria-pressed", on);
   if (opt === "C") { slider.disabled = on; act.textContent = on ? "Loosen knob" : "Tighten knob"; say(on ? "Clamped at " + Math.round(angle) + "°." : "Loose: set the angle.", on ? "good" : ""); }
-  else { act.textContent = on ? "Release pawl" : "Press pawl"; say(on ? "Pawl held down: the arm can go down." : "", ""); }
+  else {
+    act.textContent = on ? "Release pawl" : "Press pawl"; say(on ? "Pawl held down: the arm can go down." : "", "");
+    if (!on && angle % 30) setAngle(Math.floor(angle / 30) * 30);
+    bend();
+  }
 });
 document.querySelectorAll(".tabs button").forEach(b => b.addEventListener("click", () => choose(b.dataset.o)));
 $("cut").addEventListener("change", e => { if (ren) ren.localClippingEnabled = e.target.checked; });
@@ -185,6 +226,7 @@ $("cut").addEventListener("change", e => { if (ren) ren.localClippingEnabled = e
 function show(o){
   Object.entries(loaded).forEach(([k, v]) => v.root.visible = k === o);
   cur = loaded[o]; if (cur) cur.moving.rotation.x = angle * Math.PI / 180;
+  bend();
 }
 function b64ToBuf(s){ const b = atob(s), u = new Uint8Array(b.length); for (let i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u.buffer; }
 
@@ -203,7 +245,11 @@ function b64ToBuf(s){ const b = atob(s), u = new Uint8Array(b.length); for (let 
   Object.entries(GLB).forEach(([k, s]) => loader.parse(b64ToBuf(s), "", g => {
     g.scene.traverse(n => { if (n.isMesh) { n.material.clippingPlanes = [clipPlane]; n.material.clipShadows = true; n.material.side = THREE.DoubleSide; } });
     const moving = g.scene.getObjectByName("moving");
-    loaded[k] = {root: g.scene, moving}; scene.add(g.scene); show(opt);
+    let spring = null; const sn = g.scene.getObjectByName("spring");
+    if (sn) sn.traverse(n => { if (n.isMesh && !spring) spring = n; });
+    const entry = {root: g.scene, moving, spring};
+    if (spring) { spring.geometry = spring.geometry.clone(); entry.springBase = Float32Array.from(spring.geometry.attributes.position.array); }
+    loaded[k] = entry; scene.add(g.scene); show(opt);
   }));
   function size(){ const w = stage.clientWidth, h = Math.max(380, stage.clientHeight); ren.setSize(w, h); cam.aspect = w / h; cam.updateProjectionMatrix(); }
   new ResizeObserver(size).observe(stage); size();

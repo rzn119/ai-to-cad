@@ -11,7 +11,8 @@ P = json.loads((ROOT / "build" / "params.json").read_text())
 SHIFT = trimesh.transformations.translation_matrix([-P["XC"], -P["AY"], -P["AZ"]])
 YUP = trimesh.transformations.rotation_matrix(-np.pi / 2, [1, 0, 0])
 COL = {"connector": [0.56, 0.69, 0.85, 1], "moving": [0.94, 0.91, 0.86, 1], "knob": [0.24, 0.27, 0.31, 1],
-       "bolt": [0.62, 0.64, 0.66, 1]}
+       "bolt": [0.62, 0.64, 0.66, 1],
+       "spring": [0.93, 0.55, 0.22, 1]}
 
 def mesh(path, col, extra=np.eye(4)):
     m = trimesh.load(path); m.merge_vertices()
@@ -23,7 +24,14 @@ def scene(opt, deg=0.0):
     d = ROOT / "build" / opt
     rot = trimesh.transformations.rotation_matrix(np.radians(deg), [1, 0, 0])   # applied after SHIFT: axis at origin
     sc = trimesh.Scene()
-    sc.add_geometry(mesh(d / "connector.stl", COL["connector"]), geom_name="connector", node_name="connector")
+    if (d / "spring.stl").exists():          # A, B: the spring separate, finely meshed so the viewer can bend it
+        sc.add_geometry(mesh(d / "connector_fixed.stl", COL["connector"]), geom_name="connector", node_name="connector")
+        sp = mesh(d / "spring.stl", COL["spring"])
+        v, f = trimesh.remesh.subdivide_to_size(sp.vertices, sp.faces, max_edge=1.0)
+        sp = trimesh.Trimesh(v, f, process=False, visual=sp.visual)
+        sc.add_geometry(sp, geom_name="spring", node_name="spring")
+    else:
+        sc.add_geometry(mesh(d / "connector.stl", COL["connector"]), geom_name="connector", node_name="connector")
     mov = trimesh.util.concatenate([trimesh.load(d / "arm.stl"), trimesh.load(d / "end.stl")])
     mov.export(d / "moving.stl")
     sc.add_geometry(mesh(d / "moving.stl", COL["moving"], rot), geom_name="moving", node_name="moving")

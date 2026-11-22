@@ -273,7 +273,16 @@ if __name__ == "__main__":
             for lab, s, side in (("connector", o["connector"], False), ("arm_with_end", o["arm"] + o["end"], True),
                                  ("knob", o["extras"][0][1], True)):
                 bd.export_stl(on_bed([s], side)[0], str(pr / name / f"hinge_C_{lab}.stl"), tolerance=0.005, angular_tolerance=0.05)
+    # for the viewer: the spring (bridge / pawl with its tooth) on its own, and the connector without it
+    for name, prof, (y0, y1, t) in (("A", a_nub_profile(), (A_Y0, A_Y1, A_T)), ("B", b_tooth_profile(), (B_Y0, B_Y1, B_T))):
+        con = option(name)["connector"]
+        top = max(z for _, z in prof) + 0.05
+        cutbox = box(SPR_X0, SPR_X1, y0, y1, CZ0 - t - 0.01, top)
+        spring = con & cutbox
+        bd.export_stl(con - cutbox, str(root / "build" / name / "connector_fixed.stl"), tolerance=0.005, angular_tolerance=0.05)
+        bd.export_stl(spring, str(root / "build" / name / "spring.stl"), tolerance=0.005, angular_tolerance=0.05)
+        print(name, "spring", round(spring.volume, 1))
     json.dump({"XC": XC, "AY": AY, "AZ": AZ, "R": R, "ANGLES": ANGLES, "CZ0": CZ0,
-               "A": {"angles": ANGLES, "profile": a_nub_profile(), "spring": [SPR_X0, SPR_X1, A_Y0, A_Y1, A_T]},
-               "B": {"angles": B_ANGLES, "profile": b_tooth_profile(), "spring": [SPR_X0, SPR_X1, B_Y0, B_Y1, B_T]}},
+               "A": {"angles": ANGLES, "profile": a_nub_profile(), "spring": [SPR_X0, SPR_X1, A_Y0, A_Y1, A_T], "span": [A_Y0, A_Y1]},
+               "B": {"angles": B_ANGLES, "profile": b_tooth_profile(), "spring": [SPR_X0, SPR_X1, B_Y0, B_Y1, B_T], "span": [B_Y0, B_Y1]}},
               open(root / "build" / "params.json", "w"), indent=1)
