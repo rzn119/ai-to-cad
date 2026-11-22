@@ -1,0 +1,213 @@
+<title>Lockable Hinge Options</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Archivo:wght@600;700&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<style>
+/* Layout: one column workbench sheet; viewer + controls up top, option cards, then section drawing and the numbers. */
+:root{
+  --bg:#f3f5f7; --panel:#ffffff; --ink:#1d2731; --muted:#5b6876; --line:#d6dde4;
+  --accent:#2f6fb3; --accent-soft:#e3edf8; --ok:#2e7d4f; --warn:#a4561b;
+  --stage:#e9edf1;
+  --display:"Archivo","Helvetica Neue",Arial,sans-serif; --body:"IBM Plex Sans",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141a20; --panel:#1c242c; --ink:#e4e9ee; --muted:#9aa7b4; --line:#2e3a45;
+  --accent:#6ea8e6; --accent-soft:#1f3347; --ok:#6cc28f; --warn:#e3a06a; --stage:#1a2129; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141a20; --panel:#1c242c; --ink:#e4e9ee; --muted:#9aa7b4; --line:#2e3a45;
+  --accent:#6ea8e6; --accent-soft:#1f3347; --ok:#6cc28f; --warn:#e3a06a; --stage:#1a2129; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55}
+.wrap{max-width:1080px;margin:0 auto;padding-block:28px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:28px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;letter-spacing:-.01em}
+h1{font-size:clamp(1.6rem,3.5vw,2.2rem)} h2{font-size:1.25rem} h3{font-size:1.05rem}
+p{margin:0;max-width:68ch}
+.lede{color:var(--muted)}
+.eyebrow{font-family:var(--mono);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+header{display:grid;gap:8px}
+.bench{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:16px;align-items:stretch}
+@media (max-width:760px){.bench{grid-template-columns:1fr}}
+#stage{position:relative;background:var(--stage);border:1px solid var(--line);border-radius:10px;min-height:380px;overflow:hidden}
+#stage canvas{display:block;width:100%;height:100%}
+#fallback{padding:12px}
+.hint{position:absolute;left:10px;bottom:8px;font-size:.75rem;color:var(--muted);font-family:var(--mono)}
+.ctl{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:14px;align-content:start;min-width:0}
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+.tabs button{font:500 .85rem var(--body);border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:6px;padding:6px 10px;cursor:pointer}
+.tabs button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--panel)}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.angle{display:flex;align-items:baseline;gap:8px}
+.angle output{font:600 2rem var(--mono);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.ticks{display:flex;justify-content:space-between;font:400 .7rem var(--mono);color:var(--muted)}
+.row{display:flex;flex-wrap:wrap;gap:8px}
+.row label{display:flex;align-items:center;gap:6px;font-size:.88rem;cursor:pointer}
+.act{font:500 .85rem var(--body);border:1px solid var(--accent);color:var(--accent);background:var(--accent-soft);border-radius:6px;padding:6px 10px;cursor:pointer;user-select:none}
+.act[aria-pressed="true"]{background:var(--accent);color:var(--panel)}
+#status{font-size:.88rem;min-height:2.6em;color:var(--muted)}
+#status.lock{color:var(--warn)} #status.good{color:var(--ok)}
+.desc{font-size:.9rem}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+@media (max-width:860px){.cards{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:10px;align-content:start}
+.card .tag{font:500 .72rem var(--mono);color:var(--muted);letter-spacing:.05em;text-transform:uppercase}
+dl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:0;font-size:.86rem}
+dt{color:var(--muted)} dd{margin:0}
+.figure{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:10px}
+.figure img{border-radius:6px;background:#fff}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.86rem;min-width:560px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:500 .75rem var(--mono);text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+td.n{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.note{font-size:.86rem;color:var(--muted)}
+ul{margin:0;padding-left:1.2em;display:grid;gap:4px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+<header>
+  <span class="eyebrow">hinge.3dm · cone-pivot hinge · 0–180°</span>
+  <h1>Three ways to make the hinge hold an angle</h1>
+  <p class="lede">Each option is built on your hinge as it is in the .3dm: the same box, knuckle, arm and end piece, and the same pivot axis. Pick an option and move the arm. Turn on "Cut in half" to see the parts inside the channel.</p>
+</header>
+
+<section class="bench" aria-label="3D viewer">
+  <div id="stage"><div id="fallback" hidden><p class="note">The 3D viewer could not load here. These renders show each option at 60°.</p><img alt="Renders of the original and options A, B, C at 60 degrees" src="__RENDERS__"></div><span class="hint">drag to turn · scroll to zoom</span></div>
+  <div class="ctl">
+    <div class="tabs" role="group" aria-label="Option">
+      <button id="t-original" data-o="original" aria-pressed="false">Original</button>
+      <button id="t-A" data-o="A" aria-pressed="true">A · Click detent</button>
+      <button id="t-B" data-o="B" aria-pressed="false">B · Ratchet</button>
+      <button id="t-C" data-o="C" aria-pressed="false">C · Clamp knob</button>
+    </div>
+    <div>
+      <div class="angle"><output id="ang" for="slider">0°</output><span class="note" id="steps">stops every 15°</span></div>
+      <input type="range" id="slider" min="0" max="180" step="0.5" value="0" aria-label="Arm angle">
+      <div class="ticks"><span>0°</span><span>45°</span><span>90°</span><span>135°</span><span>180°</span></div>
+    </div>
+    <div class="row">
+      <label><input type="checkbox" id="cut"> Cut in half</label>
+      <button class="act" id="act" aria-pressed="false" hidden></button>
+    </div>
+    <p id="status"></p>
+    <p class="desc" id="desc"></p>
+  </div>
+</section>
+
+<section class="cards" aria-label="Options">
+  <article class="card"><span class="tag">A · no hardware</span><h3>Click detent</h3>
+    <p class="desc">13 V-notches on the back of the knuckle, one every 15°. A V-nub on a thin bridge in the channel floor clicks into them. Push the arm and it clicks to the next stop.</p>
+    <dl><dt>Stops</dt><dd>0, 15, 30 … 180°</dd><dt>Spring</dt><dd>bridge 6 × 1.0 × 24.5 mm, fixed at both ends, gives 0.57 mm</dd><dt>Hold</dt><dd>light: a panel's own weight, not a load</dd><dt>Print</dt><dd>in place, as yours</dd></dl></article>
+  <article class="card"><span class="tag">B · no hardware</span><h3>Ratchet</h3>
+    <p class="desc">Saw-tooth notches every 30° and a pawl in the floor. Lifting the arm ramps the pawl down and it clicks up stop by stop. Pushing the arm down meets a square face and is blocked. To lower it, press the pawl's front end down.</p>
+    <dl><dt>Stops</dt><dd>0, 30, 60 … 180°</dd><dt>Spring</dt><dd>pawl 6 × 1.2 mm, 25 mm cantilever, gives 1.0 mm</dd><dt>Hold</dt><dd>positive, against loads pushing the arm down</dd><dt>Print</dt><dd>in place; small support under the pawl</dd></dl></article>
+  <article class="card"><span class="tag">C · M4 bolt + printed knob</span><h3>Clamp knob</h3>
+    <p class="desc">The cone pivots become an M4 bolt through the walls and knuckle. Slits turn the walls beside the knuckle into flexible ears. Tighten the knob and the ears clamp the knuckle at any angle.</p>
+    <dl><dt>Stops</dt><dd>any angle</dd><dt>Clamp</dt><dd>ears close the 0.19 mm gaps each side</dd><dt>Hold</dt><dd>strongest, about 1 N·m when hand-tight (estimate)</dd><dt>Print</dt><dd>3 separate parts, no supports in the box</dd></dl></article>
+</section>
+
+<section class="figure" aria-label="Section">
+  <h2>Inside the knuckle</h2>
+  <p class="note">A cut through the middle of the hinge. In the "between stops" views the spring is drawn unbent, so the overlap shows how far it has to give.</p>
+  <img alt="Section drawings of options A and B at a stop and between stops" src="__SECTIONS__">
+</section>
+
+<section class="figure" aria-label="Checks">
+  <h2>Checked</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Check</th><th>Original</th><th>A</th><th>B</th><th>C</th></tr></thead>
+    <tbody>
+      <tr><td>Arm swept 0–180° in 5° steps: touches the box?</td><td>no</td><td>no (only the spring)</td><td>no (only the pawl)</td><td>no</td></tr>
+      <tr><td>Lowest angle before the arm hits the floor edge</td><td class="n" colspan="4">−5°</td></tr>
+      <tr><td>Gap to the spring tooth at every stop</td><td>—</td><td class="n">0.20 mm</td><td class="n">0.20 mm</td><td>—</td></tr>
+      <tr><td>Most the spring has to give</td><td>—</td><td class="n">0.57 mm</td><td class="n">1.0 mm (rising)</td><td>—</td></tr>
+      <tr><td>Strain in the spring (PLA ≈ 2.5 % at yield)</td><td>—</td><td class="n">≈ 1.1 %</td><td class="n">≈ 1.1 %</td><td class="n">ears ≈ 0.7 %</td></tr>
+      <tr><td>3D-print check (FDM, PLA)</td><td>—</td><td>passes, warnings</td><td>passes, warnings</td><td>passes</td></tr>
+    </tbody>
+  </table></div>
+  <ul class="note">
+    <li>Play at each stop: about ±2.5° in A and ±1.5° in B, from the 0.2 mm print-in-place clearance.</li>
+    <li>Holding strength is estimated from spring stiffness and friction. It has not been load-tested.</li>
+  </ul>
+</section>
+</div>
+
+<script>
+const GLB = __GLBS__;
+const INFO = {
+  original:{steps:"loose: no stops", desc:"Your hinge: cone bosses on the walls run in cone sockets in the knuckle. It swings freely."},
+  A:{steps:"stops every 15°", snap:15, desc:"Let go and the arm settles in the nearest notch. Moving it means pushing the nub down 0.57 mm."},
+  B:{steps:"stops every 30°, up only", snap:30, desc:"Raise the arm freely. To lower it, hold “Press pawl” and drag down."},
+  C:{steps:"any angle", desc:"Loosen the knob, set the angle, tighten. While tight, the arm cannot move."}
+};
+let opt = "A", angle = 0, cur = null, scene, cam, ren, ctl, clipPlane, loaded = {};
+const $ = id => document.getElementById(id);
+const slider = $("slider"), act = $("act"), st = $("status");
+
+function say(t, cls){ st.textContent = t; st.className = cls || ""; }
+function setAngle(a){
+  angle = a; slider.value = a; $("ang").textContent = (Math.round(a*10)/10) + "°";
+  if (cur) cur.moving.rotation.x = a * Math.PI / 180;
+}
+function choose(o){
+  opt = o;
+  document.querySelectorAll(".tabs button").forEach(b => b.setAttribute("aria-pressed", b.dataset.o === o));
+  $("steps").textContent = INFO[o].steps; $("desc").textContent = INFO[o].desc;
+  act.hidden = !(o === "B" || o === "C"); act.setAttribute("aria-pressed", "false");
+  act.textContent = o === "B" ? "Press pawl" : "Tighten knob";
+  slider.disabled = false; say("");
+  if (scene) show(o);
+  setAngle(o === "B" ? 0 : angle - (INFO[o].snap ? angle % INFO[o].snap : 0));
+}
+slider.addEventListener("input", () => {
+  const v = +slider.value;
+  if (opt === "B" && v < angle - 0.01 && act.getAttribute("aria-pressed") !== "true") {
+    slider.value = angle; say("Locked: the pawl's square face stops the arm going down. Hold “Press pawl” to lower it.", "lock"); return;
+  }
+  if (opt === "C" && act.getAttribute("aria-pressed") === "true") { slider.value = angle; return; }
+  say(""); setAngle(v);
+});
+slider.addEventListener("change", () => {
+  const s = INFO[opt].snap; if (!s) return;
+  let t = opt === "B" && act.getAttribute("aria-pressed") !== "true" ? Math.floor(angle / s + 1e-6) * s : Math.round(angle / s) * s;
+  setAngle(Math.min(180, t)); say(opt === "A" ? "Click: held at " + t + "°." : "Click: pawl in at " + t + "°.", "good");
+});
+act.addEventListener("click", () => {
+  const on = act.getAttribute("aria-pressed") !== "true"; act.setAttribute("aria-pressed", on);
+  if (opt === "C") { slider.disabled = on; act.textContent = on ? "Loosen knob" : "Tighten knob"; say(on ? "Clamped at " + Math.round(angle) + "°." : "Loose: set the angle.", on ? "good" : ""); }
+  else { act.textContent = on ? "Release pawl" : "Press pawl"; say(on ? "Pawl held down: the arm can go down." : "", ""); }
+});
+document.querySelectorAll(".tabs button").forEach(b => b.addEventListener("click", () => choose(b.dataset.o)));
+$("cut").addEventListener("change", e => { if (ren) ren.localClippingEnabled = e.target.checked; });
+
+function show(o){
+  Object.entries(loaded).forEach(([k, v]) => v.root.visible = k === o);
+  cur = loaded[o]; if (cur) cur.moving.rotation.x = angle * Math.PI / 180;
+}
+function b64ToBuf(s){ const b = atob(s), u = new Uint8Array(b.length); for (let i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u.buffer; }
+
+(function init(){
+  if (!window.THREE || !THREE.GLTFLoader || !THREE.OrbitControls) { $("fallback").hidden = false; return; }
+  const stage = $("stage");
+  scene = new THREE.Scene();
+  cam = new THREE.PerspectiveCamera(35, 1, 1, 2000); cam.position.set(-55, 38, 62);
+  ren = new THREE.WebGLRenderer({antialias:true, alpha:true}); ren.setPixelRatio(Math.min(2, devicePixelRatio));
+  ren.outputEncoding = THREE.sRGBEncoding; stage.prepend(ren.domElement);
+  ctl = new THREE.OrbitControls(cam, ren.domElement); ctl.target.set(0, -2, -10); ctl.enableDamping = true;
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x8899aa, 0.9));
+  const d = new THREE.DirectionalLight(0xffffff, 0.8); d.position.set(-40, 80, 50); scene.add(d);
+  clipPlane = new THREE.Plane(new THREE.Vector3(-1, 0, 0), 0);
+  const loader = new THREE.GLTFLoader();
+  Object.entries(GLB).forEach(([k, s]) => loader.parse(b64ToBuf(s), "", g => {
+    g.scene.traverse(n => { if (n.isMesh) { n.material.clippingPlanes = [clipPlane]; n.material.clipShadows = true; n.material.side = THREE.DoubleSide; } });
+    const moving = g.scene.getObjectByName("moving");
+    loaded[k] = {root: g.scene, moving}; scene.add(g.scene); show(opt);
+  }));
+  function size(){ const w = stage.clientWidth, h = Math.max(380, stage.clientHeight); ren.setSize(w, h); cam.aspect = w / h; cam.updateProjectionMatrix(); }
+  new ResizeObserver(size).observe(stage); size();
+  (function loop(){ requestAnimationFrame(loop); ctl.update(); ren.render(scene, cam); })();
+})();
+choose("A");
+</script>
