@@ -27,3 +27,10 @@ Every drawing says: tolerances ISO 2768-m; dimensions not shown are taken from t
 ## Rebuild
 `cad run src/build_set.py` (needs `build/combined.stp` and `fonts/NotoSansSC-Regular.ttf` from Google Fonts).
 `src/catalogue.py` holds the part names, codes and materials; edit it and rebuild to rename or re-assign parts.
+
+## Revision B: one page per component group (`out_groups/`)
+Made from the updated export (142 parts, the layout of component groups). `PDF/suitcase_groups.pdf`, 8 pages:
+parts list, then 配件 accessories, 行李箱框 frame A, frame B, 行李箱面板 leather panel, 外壳+轮座 shell with the
+wheel housing, 行李箱框+拉杆 frame + pull handle, 行李箱框 frame C. Each group is drawn as laid out in Rhino;
+overall dimensions rounded to 5 mm. The updated export has no leather panel, so page 5 uses the panel from the
+earlier export. `DXF/`: one DXF per page. Rebuild: `cad run src/build_groups.py`.

@@ -3,9 +3,9 @@ from pathlib import Path
 import build123d as bd
 from OCP.STEPControl import STEPControl_Reader
 ROOT = Path(__file__).resolve().parent.parent
-r = STEPControl_Reader(); r.ReadFile(str(ROOT / "build" / "combined_v2.stp")); r.TransferRoots()
+r = STEPControl_Reader(); r.ReadFile(str(ROOT / "build" / "combined_v3.stp")); r.TransferRoots()
 c = bd.Compound(bd.Shape.cast(r.OneShape()).solids())
-bd.export_brep(c, str(ROOT / "build" / "combined_v2_solids.brep"))
+bd.export_brep(c, str(ROOT / "build" / "combined_v3_solids.brep"))
 out = []
 for k, s in enumerate(c.solids()):
     b = s.bounding_box()

@@ -8,9 +8,9 @@ from cad.eng_drawing import Sheet
 from drawkit import render, LAST_NOTES
 
 
-def bom_sheet(rows):
+def bom_sheet(rows, size="A2"):
     """rows: (no, code, cn, en, qty, material, make_buy, size, sheet_info)"""
-    sh = Sheet("A2", title="零件明细表 PARTS LIST", part_number="SC-000", material="—", revision="A",
+    sh = Sheet(size, title="零件明细表 PARTS LIST", part_number="SC-000", material="—", revision="A",
                notes=["零件名称标注(待确认)者请设计方确认 / NAMES AND MATERIALS MARKED TBC: TO BE CONFIRMED BY DESIGNER",
                       "3D模型(STEP)为加工依据, 图纸未注尺寸以模型为准 / THE STEP MODEL IS THE MASTER FOR ALL GEOMETRY",
                       "表面处理及颜色另行确认 / SURFACE FINISH AND COLOUR TO BE AGREED",
