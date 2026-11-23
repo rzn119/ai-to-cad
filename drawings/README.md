@@ -33,4 +33,4 @@ Made from the updated export (142 parts, the layout of component groups). `PDF/s
 parts list, then 配件 accessories, 行李箱框 frame A, frame B, 行李箱面板 leather panel, 外壳+轮座 shell with the
 wheel housing, 行李箱框+拉杆 frame + pull handle, 行李箱框 frame C. Each group is drawn as laid out in Rhino;
 overall dimensions rounded to 5 mm. The updated export has no leather panel, so page 5 uses the panel from the
-earlier export. `DXF/`: one DXF per page. Rebuild: `cad run src/build_groups.py`.
+earlier export. `DXF/`: one DXF per page, plus `suitcase_groups_all.dxf` with all 8 pages side by side (each page a block named PAGE_...; explode it to edit). Rebuild: `cad run src/build_groups.py`, then `cad run src/combine_dxf.py`.
