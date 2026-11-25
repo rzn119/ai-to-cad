@@ -34,3 +34,11 @@ parts list, then 配件 accessories, 行李箱框 frame A, frame B, 行李箱面
 wheel housing, 行李箱框+拉杆 frame + pull handle, 行李箱框 frame C. Each group is drawn as laid out in Rhino;
 overall dimensions rounded to 5 mm. The updated export has no leather panel, so page 5 uses the panel from the
 earlier export. `DXF/`: one DXF per page, plus `suitcase_groups_all.dxf` with all 8 pages side by side (each page a block named PAGE_...; explode it to edit). Rebuild: `cad run src/build_groups.py`, then `cad run src/combine_dxf.py`.
+
+## Revision C: quote set from `3d_printing_combined_manufacture2.stp` (`out_v4/`)
+That file holds the exploded assembled suitcase (153 parts); its parts are sorted into the seven groups of the layout
+image. `PDF/suitcase_quote_drawings.pdf`, 8 pages: page 1 parts list for quoting (48 lines: code, name, quantity per
+suitcase, material, size rounded to 5 mm, page), then 配件, 行李箱框 A, 行李箱框 B, 行李箱面板 (×2), 外壳+轮座 (the green
+wheel housings with the shell), 行李箱框+拉杆, 行李箱框 C. Overall dimensions rounded to the nearest 5 mm.
+`DXF/`: one DXF per page and `suitcase_quote_all.dxf` with all pages. Rebuild: `cad run src/build_v4.py`, then
+`cad run src/combine_dxf.py out_v4 suitcase_quote_all.dxf`.

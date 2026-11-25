@@ -6,8 +6,11 @@ from ezdxf.addons import Importer
 from ezdxf.math import Matrix44
 
 ROOT = Path(__file__).resolve().parent.parent
-src = sorted((ROOT / "out_groups" / "DXF").glob("*.dxf"))
-src = [p for p in src if p.name != "suitcase_groups_all.dxf"]
+import sys
+FOLDER = ROOT / (sys.argv[1] if len(sys.argv) > 1 else "out_groups") / "DXF"
+OUTNAME = sys.argv[2] if len(sys.argv) > 2 else "suitcase_groups_all.dxf"
+src = sorted(FOLDER.glob("*.dxf"))
+src = [p for p in src if not p.name.endswith("_all.dxf")]
 out = ezdxf.new("R2010", setup=True)
 out.units = ezdxf.units.MM
 x, gap = 0.0, 40.0
@@ -36,6 +39,6 @@ for p in src:
     x += w + gap
 for st in out.styles:
     st.dxf.font = "simsun.ttc"
-out.saveas(ROOT / "out_groups" / "DXF" / "suitcase_groups_all.dxf", encoding="utf-8")
-a = ezdxf.readfile(ROOT / "out_groups" / "DXF" / "suitcase_groups_all.dxf").audit()
+out.saveas(FOLDER / OUTNAME, encoding="utf-8")
+a = ezdxf.readfile(FOLDER / OUTNAME).audit()
 print("audit errors", len(a.errors), "fixes", len(a.fixes))
